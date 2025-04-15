@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hustensaft Management - Dein Streamer-Partner</title>
+  <style>
+    /* Grundlegende Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: white;
+    }
+
+    /* Hero-Bereich */
+    .hero {
+      background: url('hero-image.jpg') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .cta-button {
+      background-color: #FF5733;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 1.1rem;
+    }
+
+    .cta-button:hover {
+      background-color: #c9451f;
+    }
+
+    /* About Section */
+    .about {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .about h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .about p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Services Section */
+    .services {
+      background-color: #333;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .services h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .services p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .services ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .services li {
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    /* Featured Streamer Section */
+    .featured-streamers {
+      background-color: #444;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .featured-streamers h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .streamer-list {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .streamer {
+      background-color: #555;
+      padding: 20px;
+      width: 250px;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .streamer img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .streamer h3 {
+      font-size: 1.5rem;
+      margin-top: 10px;
+    }
+
+    .streamer p {
+      margin: 10px 0;
+    }
+
+    footer {
+      background-color: #222;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .contact p {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero-Bereich -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Hustensaft Management</h1>
+      <p>Dein Partner für Streamer-Management und Erfolg im Netz</p>
+      <a href="#streamer" class="cta-button">Unsere Streamer entdecken</a>
+    </div>
+  </header>
+
+  <!-- Vorstellung -->
+  <section class="about">
+    <h2>Wer wir sind</h2>
+    <p>Hustensaft Management bietet maßgeschneiderte Unterstützung für Streamer. Wir kümmern uns um alles – von Branding über Sponsoring bis hin zu Events. Unser Ziel ist es, die größten Talente zu fördern und ihren Erfolg auf die nächste Stufe zu bringen.</p>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <h2>Unsere Services</h2>
+    <p>Wenn du als Streamer bei Hustensaft Management aufgenommen wirst, profitierst du von folgenden Vorteilen:</p>
+    <ul>
+      <li>Streamen unter dem Namen von Hustensaft Management für mehr Reichweite und Unterstützung.</li>
+      <li>Maßgeschneiderte Branding- und Sponsoring-Deals.</li>
+      <li>Professionelle Unterstützung bei Projekten und Events.</li>
+      <li>Kontinuierliche Förderung und Networking mit anderen Streamern und Partnern.</li>
+    </ul>
+  </section>
+
+  <!-- Featured Streamer -->
+  <section class="featured-streamers" id="streamer">
+    <h2>Unsere Streamer</h2>
+    <div class="streamer-list">
+      <!-- Streamer 1 -->
+      <div class="streamer">
+        <img src="streamer1.jpg" alt="Hu_stensaft">
+        <h3>Hu_stensaft</h3>
+        <p>Platform: Twitch</p>
+        <a href="https://www.twitch.tv/hu_stensaft" target="_blank" class="cta-button">Besuchen</a>
+      </div>
+      <!-- Streamer 2 (noch nicht bekannt) -->
+      <div class="streamer">
+        <img src="streamer2.jpg" alt="Streamer 2">
+        <h3>Streamer Name 2</h3>
+        <p>Platform: Noch nicht bekannt</p>
+        <a href="#" class="cta-button">Bald verfügbar</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Jetzt Streamer werden -->
+  <section class="join">
+    <h2>Jetzt Streamer werden!</h2>
+    <p>Bist du ein Streamer und möchtest Teil unseres Teams werden? Fülle einfach das Formular aus und bewirb dich!</p>
+    <a href="https://forms.gle/F5UGnAwSipq4LpST8" target="_blank" class="cta-button">Jetzt bewerben</a>
+  </section>
+
+  <!-- Footer mit Kontakt -->
+  <footer>
+    <div class="contact">
+      <p>Hast du Fragen oder möchtest du ein Teil unseres Teams werden? Kontaktiere uns!</p>
+      <a href="mailto:kontakt@hustensaft.org" class="cta-button">Kontakt aufnehmen</a>
+    </div>
+  </footer>
+
+  <script>
+    // Hier kannst du später noch Interaktivität einbauen (z.B. Scroll-Effekte, Animationen)
+  </script>
+</body>
+</html>
