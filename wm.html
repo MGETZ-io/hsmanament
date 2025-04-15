@@ -17,37 +17,60 @@
       flex-direction: column;
       text-align: center;
     }
-    h1 {
-      font-size: 3rem;
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
       color: #FF5733;
     }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #FF5733;
+    }
+
     p {
       font-size: 1.2rem;
       max-width: 600px;
     }
-    .logo {
-      margin-bottom: 30px;
-      font-size: 2rem;
-      font-weight: bold;
+
+    .windows-loader {
+      margin-top: 50px;
+      width: 60px;
+      height: 60px;
+      position: relative;
     }
-    .spinner {
-      margin-top: 40px;
-      width: 40px;
-      height: 40px;
-      border: 5px solid #FF5733;
-      border-top: 5px solid transparent;
+
+    .circle {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      border: 6px solid transparent;
+      border-top-color: #FF5733;
+      position: absolute;
+      animation: spin 1s linear infinite, blink 2s ease-in-out infinite;
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
 <body>
   <div class="logo">Hustensaft Management</div>
   <h1>Wartungsarbeiten</h1>
-  <p>Wir arbeiten gerade im Hintergrund an neuen Features für unsere Streamer und Partner. Die Seite ist bald wieder erreichbar!</p>
-  <div class="spinner"></div>
+  <p>Wir sind bald wieder für dich da! Wir arbeiten im Hintergrund an neuen Features für unsere Streamer und Partner.</p>
+
+  <div class="windows-loader">
+    <div class="circle"></div>
+  </div>
 </body>
 </html>
