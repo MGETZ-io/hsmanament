@@ -30,6 +30,9 @@
       box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
       padding: 1rem;
       z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .status {
@@ -39,8 +42,12 @@
       color: #0077cc;
     }
 
+    .hidden {
+      display: none;
+    }
+
     button {
-      width: 100%;
+      width: 90%;
       margin-top: 0.5rem;
       padding: 1rem;
       font-size: 1rem;
@@ -61,20 +68,17 @@
 <body>
   <div id="map"></div>
 
-  <!-- Ding Sound -->
+  <!-- Sound -->
   <audio id="ding" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" preload="auto"></audio>
 
   <div class="bottom-bar">
     <div class="status" id="status">Warte auf neuen Auftrag...</div>
     <div id="auftragInfo"></div>
-    <button id="btn1" onclick="binDa()" disabled>Bin da</button>
-    <button id="btn2" onclick="personDa()" disabled>Person ist da</button>
-    <button id="btn3" onclick="angekommen()" disabled>Angekommen</button>
-    <button id="btn4" onclick="ausgestiegen()" disabled>Person ausgestiegen</button>
+    <button id="btn" class="hidden" onclick="nextStep()"></button>
   </div>
 
   <script>
-    const map = L.map('map').setView([34.0522, -118.2437], 13); // Los Angeles als Beispiel
+    const map = L.map('map').setView([34.0522, -118.2437], 13); // Beispielort
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © OpenStreetMap contributors'
     }).addTo(map);
@@ -92,69 +96,73 @@
 
     const status = document.getElementById("status");
     const auftragInfo = document.getElementById("auftragInfo");
-    const buttons = [
-      document.getElementById("btn1"),
-      document.getElementById("btn2"),
-      document.getElementById("btn3"),
-      document.getElementById("btn4")
-    ];
+    const button = document.getElementById("btn");
     const dingSound = document.getElementById("ding");
 
     let auftragLäuft = false;
+    let schritt = 0;
     let zielMarker = null;
+    let kundenName = "";
+    let ziel = null;
+
+    function zeigeButton(text) {
+      button.textContent = text;
+      button.classList.remove("hidden");
+    }
+
+    function versteckeButton() {
+      button.classList.add("hidden");
+    }
 
     function warteAuftrag() {
       status.textContent = "Warte auf neuen Auftrag...";
-      auftragInfo.textContent = "";
-      buttons.forEach(btn => btn.disabled = true);
+      auftragInfo.innerHTML = "";
+      versteckeButton();
       if (zielMarker) {
         map.removeLayer(zielMarker);
         zielMarker = null;
       }
-      const zeit = Math.floor(Math.random() * 90) + 30; // 30–120 Sekunden
+      const zeit = Math.floor(Math.random() * 15) + 5; // 5–20 Sekunden
       setTimeout(neuerAuftrag, zeit * 1000);
     }
 
     function neuerAuftrag() {
       if (auftragLäuft) return;
       auftragLäuft = true;
-      status.textContent = "Neuer Auftrag erhalten!";
-      auftragInfo.innerHTML = "🚘 Auftrag annehmen";
-      buttons[0].disabled = false;
-
-      // Vibration & Sound
+      schritt = 1;
+      status.textContent = "Neuer Auftrag!";
+      zeigeButton("Bin da");
       if (navigator.vibrate) navigator.vibrate(200);
-      dingSound.play().catch(e => console.log("Sound konnte nicht abgespielt werden:", e));
+      dingSound.play().catch(e => console.log("Soundproblem:", e));
     }
 
-    function binDa() {
-      status.textContent = "Warte auf Kunde...";
-      auftragInfo.innerHTML = "Name: <strong>" + randomName() + "</strong>";
-      buttons[0].disabled = true;
-      buttons[1].disabled = false;
-    }
-
-    function personDa() {
-      const ziel = randomHaltestelle();
-      status.textContent = "Ziel erhalten";
-      auftragInfo.innerHTML += "<br>Ziel: <strong>" + ziel.name + "</strong>";
-      zielMarker = L.marker(ziel.coords).addTo(map).bindPopup("Ziel: " + ziel.name).openPopup();
-      map.setView(ziel.coords, 14);
-      buttons[1].disabled = true;
-      buttons[2].disabled = false;
-    }
-
-    function angekommen() {
-      status.textContent = "Person entlassen?";
-      buttons[2].disabled = true;
-      buttons[3].disabled = false;
-    }
-
-    function ausgestiegen() {
-      status.textContent = "Person ist ausgestiegen.";
-      buttons[3].disabled = true;
-      auftragLäuft = false;
-      setTimeout(warteAuftrag, (Math.random() * 30 + 30) * 1000); // 30–60s
+    function nextStep() {
+      if (schritt === 1) {
+        kundenName = randomName();
+        status.textContent = "Fahrgast gefunden";
+        auftragInfo.innerHTML = "Fahrgast: <strong>" + kundenName + "</strong>";
+        zeigeButton("Person ist da");
+        schritt++;
+      } else if (schritt === 2) {
+        ziel = randomHaltestelle();
+        status.textContent = "Ziel: " + ziel.name;
+        auftragInfo.innerHTML += "<br>Ziel: <strong>" + ziel.name + "</strong>";
+        zielMarker = L.marker(ziel.coords).addTo(map).bindPopup("Ziel: " + ziel.name).openPopup();
+        map.setView(ziel.coords, 14);
+        zeigeButton("Angekommen");
+        schritt++;
+      } else if (schritt === 3) {
+        status.textContent = "Ankunft bestätigt";
+        zeigeButton("Person ausgestiegen");
+        schritt++;
+      } else if (schritt === 4) {
+        status.textContent = "Person ausgestiegen.";
+        versteckeButton();
+        auftragLäuft = false;
+        schritt = 0;
+        const pause = Math.floor(Math.random() * 15) + 5;
+        setTimeout(warteAuftrag, pause * 1000);
+      }
     }
 
     function randomName() {
