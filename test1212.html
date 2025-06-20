@@ -2,43 +2,46 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hin und Wech – Fahrermodus</title>
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body {
+    html, body {
       margin: 0;
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
-      background: #f7f8fc;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
     }
 
-    h1 {
-      color: #ff6600;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 2rem;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
-      max-width: 400px;
+    #map {
+      height: 100%;
       width: 100%;
+      z-index: 1;
+    }
+
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+      padding: 1rem;
+      z-index: 1000;
     }
 
     .status {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
       text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
       color: #0077cc;
     }
 
     button {
       width: 100%;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
       padding: 1rem;
       font-size: 1rem;
       background-color: #0077cc;
@@ -49,19 +52,19 @@
       transition: 0.2s;
     }
 
-    button:hover {
-      background-color: #005fa3;
-    }
-
-    .disabled {
-      background-color: #ccc !important;
+    button:disabled {
+      background-color: #ccc;
       cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <h1>Hin und Wech – Fahrermodus</h1>
-  <div class="card">
+  <div id="map"></div>
+
+  <!-- Ding Sound -->
+  <audio id="ding" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" preload="auto"></audio>
+
+  <div class="bottom-bar">
     <div class="status" id="status">Warte auf neuen Auftrag...</div>
     <div id="auftragInfo"></div>
     <button id="btn1" onclick="binDa()" disabled>Bin da</button>
@@ -71,6 +74,11 @@
   </div>
 
   <script>
+    const map = L.map('map').setView([34.0522, -118.2437], 13); // Los Angeles als Beispiel
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
+
     const haltestellen = [
       "Downtown Central", "Hillcrest Park", "Elmwood Ave", "Sunset Blvd",
       "Palm Heights", "Greenfield Mall", "Union Station", "Canyon Drive",
@@ -90,14 +98,20 @@
       document.getElementById("btn3"),
       document.getElementById("btn4")
     ];
+    const dingSound = document.getElementById("ding");
 
     let auftragLäuft = false;
+    let zielMarker = null;
 
     function warteAuftrag() {
       status.textContent = "Warte auf neuen Auftrag...";
       auftragInfo.textContent = "";
       buttons.forEach(btn => btn.disabled = true);
-      const zeit = Math.floor(Math.random() * 90) + 30;
+      if (zielMarker) {
+        map.removeLayer(zielMarker);
+        zielMarker = null;
+      }
+      const zeit = Math.floor(Math.random() * 90) + 30; // 30–120 Sekunden
       setTimeout(neuerAuftrag, zeit * 1000);
     }
 
@@ -107,6 +121,10 @@
       status.textContent = "Neuer Auftrag erhalten!";
       auftragInfo.innerHTML = "🚘 Auftrag annehmen";
       buttons[0].disabled = false;
+
+      // Vibration & Sound
+      if (navigator.vibrate) navigator.vibrate(200);
+      dingSound.play().catch(e => console.log("Sound konnte nicht abgespielt werden:", e));
     }
 
     function binDa() {
@@ -119,7 +137,9 @@
     function personDa() {
       const ziel = randomHaltestelle();
       status.textContent = "Ziel erhalten";
-      auftragInfo.innerHTML += "<br>Ziel: <strong>" + ziel + "</strong>";
+      auftragInfo.innerHTML += "<br>Ziel: <strong>" + ziel.name + "</strong>";
+      zielMarker = L.marker(ziel.coords).addTo(map).bindPopup("Ziel: " + ziel.name).openPopup();
+      map.setView(ziel.coords, 14);
       buttons[1].disabled = true;
       buttons[2].disabled = false;
     }
@@ -134,7 +154,7 @@
       status.textContent = "Person ist ausgestiegen.";
       buttons[3].disabled = true;
       auftragLäuft = false;
-      setTimeout(warteAuftrag, (Math.random() * 30 + 30) * 1000);
+      setTimeout(warteAuftrag, (Math.random() * 30 + 30) * 1000); // 30–60s
     }
 
     function randomName() {
@@ -142,10 +162,12 @@
     }
 
     function randomHaltestelle() {
-      return haltestellen[Math.floor(Math.random() * haltestellen.length)];
+      const haltestelle = haltestellen[Math.floor(Math.random() * haltestellen.length)];
+      const lat = 34.05 + (Math.random() - 0.5) * 0.1;
+      const lng = -118.25 + (Math.random() - 0.5) * 0.1;
+      return { name: haltestelle, coords: [lat, lng] };
     }
 
-    // Start
     warteAuftrag();
   </script>
 </body>
