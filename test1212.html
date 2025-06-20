@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hin und Wech – Fahrermodus</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f8fc;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    h1 {
+      color: #ff6600;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .status {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #0077cc;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 1rem;
+      font-size: 1rem;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .disabled {
+      background-color: #ccc !important;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hin und Wech – Fahrermodus</h1>
+  <div class="card">
+    <div class="status" id="status">Warte auf neuen Auftrag...</div>
+    <div id="auftragInfo"></div>
+    <button id="btn1" onclick="binDa()" disabled>Bin da</button>
+    <button id="btn2" onclick="personDa()" disabled>Person ist da</button>
+    <button id="btn3" onclick="angekommen()" disabled>Angekommen</button>
+    <button id="btn4" onclick="ausgestiegen()" disabled>Person ausgestiegen</button>
+  </div>
+
+  <script>
+    const haltestellen = [
+      "Downtown Central", "Hillcrest Park", "Elmwood Ave", "Sunset Blvd",
+      "Palm Heights", "Greenfield Mall", "Union Station", "Canyon Drive",
+      "Westbrook Plaza", "Pine Street"
+    ];
+
+    const namen = [
+      "Jake M.", "Sophia L.", "Emma R.", "Liam T.", "Noah B.",
+      "Olivia W.", "Ava D.", "Mason K.", "Ethan Z.", "Chloe S."
+    ];
+
+    const status = document.getElementById("status");
+    const auftragInfo = document.getElementById("auftragInfo");
+    const buttons = [
+      document.getElementById("btn1"),
+      document.getElementById("btn2"),
+      document.getElementById("btn3"),
+      document.getElementById("btn4")
+    ];
+
+    let auftragLäuft = false;
+
+    function warteAuftrag() {
+      status.textContent = "Warte auf neuen Auftrag...";
+      auftragInfo.textContent = "";
+      buttons.forEach(btn => btn.disabled = true);
+      const zeit = Math.floor(Math.random() * 90) + 30;
+      setTimeout(neuerAuftrag, zeit * 1000);
+    }
+
+    function neuerAuftrag() {
+      if (auftragLäuft) return;
+      auftragLäuft = true;
+      status.textContent = "Neuer Auftrag erhalten!";
+      auftragInfo.innerHTML = "🚘 Auftrag annehmen";
+      buttons[0].disabled = false;
+    }
+
+    function binDa() {
+      status.textContent = "Warte auf Kunde...";
+      auftragInfo.innerHTML = "Name: <strong>" + randomName() + "</strong>";
+      buttons[0].disabled = true;
+      buttons[1].disabled = false;
+    }
+
+    function personDa() {
+      const ziel = randomHaltestelle();
+      status.textContent = "Ziel erhalten";
+      auftragInfo.innerHTML += "<br>Ziel: <strong>" + ziel + "</strong>";
+      buttons[1].disabled = true;
+      buttons[2].disabled = false;
+    }
+
+    function angekommen() {
+      status.textContent = "Person entlassen?";
+      buttons[2].disabled = true;
+      buttons[3].disabled = false;
+    }
+
+    function ausgestiegen() {
+      status.textContent = "Person ist ausgestiegen.";
+      buttons[3].disabled = true;
+      auftragLäuft = false;
+      setTimeout(warteAuftrag, (Math.random() * 30 + 30) * 1000);
+    }
+
+    function randomName() {
+      return namen[Math.floor(Math.random() * namen.length)];
+    }
+
+    function randomHaltestelle() {
+      return haltestellen[Math.floor(Math.random() * haltestellen.length)];
+    }
+
+    // Start
+    warteAuftrag();
+  </script>
+</body>
+</html>
