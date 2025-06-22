@@ -12,63 +12,11 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Montserrat', sans-serif;
       background-color: #1b1b1b;
       color: white;
     }
-
-    /* Hero Bereich */
-    .hero {
-      height: 100vh;
-      background: url('hero-image.jpg') no-repeat center center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 20px;
-    }
-
-    .hero h1 {
-      font-size: 4rem;
-      color: white;
-      font-weight: 700;
-      margin-bottom: 20px;
-      letter-spacing: 2px;
-    }
-
-    .hero p {
-      font-size: 1.5rem;
-      color: white;
-      font-weight: 300;
-      margin-bottom: 30px;
-      text-transform: uppercase;
-    }
-
-    .cta-button {
-      background-color: #006f8e; /* Ozeanblau */
-      color: white;
-      padding: 15px 40px;
-      font-size: 1.2rem;
-      text-decoration: none;
-      border-radius: 5px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .cta-button:hover {
-      background-color: #008ba3; /* Hellerer Blauton (Türkis) */
-    }
-
-    /* Pfeil zu H2M */
-    .arrow {
-      font-size: 2rem;
-      margin-top: 20px;
-      color: #006f8e;
-    }
-
-    /* Navigation */
     nav {
       background-color: #111;
       position: fixed;
@@ -78,49 +26,75 @@
       padding: 15px 30px;
       z-index: 10;
     }
-
     nav ul {
       list-style: none;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
     nav ul li {
       margin: 0 20px;
     }
-
     nav ul li a {
       color: white;
       text-decoration: none;
       font-size: 1.1rem;
       text-transform: uppercase;
     }
-
     nav ul li a:hover {
       color: #FF5733;
     }
-
-    /* Section Styling */
+    .hero {
+      height: 100vh;
+      background: url('hero-image.jpg') no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      color: white;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .hero p {
+      font-size: 1.5rem;
+      color: white;
+      font-weight: 300;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    .cta-button {
+      background-color: #006f8e;
+      color: white;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      text-decoration: none;
+      border-radius: 5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .cta-button:hover {
+      background-color: #008ba3;
+    }
     section {
       padding: 60px 20px;
       text-align: center;
     }
-
     section h2 {
       font-size: 3rem;
       margin-bottom: 20px;
       font-weight: 700;
     }
-
     section p {
       font-size: 1.1rem;
       line-height: 1.6;
       max-width: 800px;
       margin: 0 auto;
     }
-
-    /* Streamer Section */
     .streamer-list {
       display: flex;
       justify-content: center;
@@ -128,7 +102,6 @@
       flex-wrap: wrap;
       margin-top: 40px;
     }
-
     .streamer {
       background-color: #333;
       padding: 20px;
@@ -137,23 +110,19 @@
       width: 280px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-
     .streamer img {
       width: 100%;
       border-radius: 5px;
     }
-
     .streamer h3 {
       font-size: 1.5rem;
       margin-top: 15px;
       font-weight: 700;
     }
-
     .streamer p {
       font-size: 1rem;
       margin-top: 5px;
     }
-
     .streamer a {
       background-color: #006f8e;
       padding: 12px 25px;
@@ -164,143 +133,58 @@
       margin-top: 15px;
       display: inline-block;
     }
-
-    .streamer a:hover {
-      background-color: #008ba3;
-    }
-
-    /* Jetzt Streamer werden - Anmeldeformular Button */
-    .join {
-      background-color: #333;
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .join h2 {
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-      font-weight: 700;
-    }
-
-    .join p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-    }
-
-    .join .cta-button {
-      padding: 15px 40px;
-      background-color: #006f8e;
-      color: white;
-      text-decoration: none;
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      border-radius: 5px;
-    }
-
-    .join .cta-button:hover {
-      background-color: #008ba3;
-    }
-
-    footer {
-      background-color: #111;
-      padding: 20px;
-      text-align: center;
-    }
-
-    footer p {
-      font-size: 1.2rem;
-    }
-
-    footer a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    footer a:hover {
-      color: #006f8e;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav>
     <ul>
-      <li><a href="#home">Home</a></li>
-      <li><a href="#about">Über uns</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#streamers">Streamer</a></li>
-      <li><a href="#contact">Kontakt</a></li>
+      <li><a href="#">Start</a></li>
+      <li><a href="#">Streamer</a></li>
+      <li><a href="#">Bewerben</a></li>
+      <li><a href="#">Kontakt</a></li>
     </ul>
   </nav>
 
-  <!-- Hero Bereich -->
-  <header class="hero" id="home">
+  <div class="hero">
     <div>
-      <h1>Management Neu Gedacht</h1>
-      <p>Wir bieten dir das Management, das du verdienst</p>
-      <a href="#streamers" class="cta-button">Jetzt Streamer werden</a>
-      <div class="arrow">→</div> <!-- Pfeil zu H2M -->
-      <h2>H2M.</h2> <!-- Neues Branding: H2M -->
+      <h1>Willkommen bei H2M.</h1>
+      <p>Dein Management für Streaming & Entertainment</p>
+      <a href="#" class="cta-button">Mehr erfahren</a>
     </div>
-  </header>
+  </div>
 
-  <!-- Über uns -->
-  <section id="about">
-    <h2>Wer wir sind</h2>
-    <p>H2M bietet maßgeschneiderte Unterstützung für Streamer und sorgt dafür, dass dein Talent die richtige Bühne erhält. Wir bieten dir alles, was du brauchst, um deine Streaming-Karriere auf das nächste Level zu bringen – Branding, Sponsoring, Events und mehr!</p>
-  </section>
-
-  <!-- Services -->
-  <section id="services">
-    <h2>Unsere Services</h2>
-    <p>Wir bieten eine Vielzahl von Dienstleistungen für Streamer an, um deren Erfolg zu fördern:</p>
-    <ul>
-      <li>Streamen unter dem Namen von H2M</li>
-      <li>Professionelles Branding und Sponsoring</li>
-      <li>Unterstützung bei Projekten und Events</li>
-      <li>Kontinuierliche Förderung und Networking mit anderen Talenten</li>
-    </ul>
-  </section>
-
-  <!-- Streamer -->
-  <section id="streamers">
+  <section>
     <h2>Unsere Streamer</h2>
+    <p>Diese Creator sind bereits Teil unseres Netzwerks</p>
     <div class="streamer-list">
       <div class="streamer">
-        <img src="hu_stensaft.jpg" alt="Hu_stensaft">
+        <img src="streamer1.jpg" alt="Streamer 1">
         <h3>Hu_stensaft</h3>
-        <p>Twitch</p>
-        <a href="https://www.twitch.tv/hu_stensaft" target="_blank">Jetzt zu Twitch!</a>
+        <p>Twitch Partner</p>
+        <a href="https://twitch.tv/hu_stensaft" target="_blank">Zum Kanal</a>
       </div>
-      <!-- Platz für weiteren Streamer -->
-      <div class="streamer">
-        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/a14d93c3-e3e2-4b37-bf27-b9d872dc3007-profile_image-70x70.jpeg" alt="Streamer 2">
-        <h3>zockerbennito23</h3>
-        <p>Twitch</p>
-        <a href="agency.hustensaft.org/wm">Aktuell Nicht Verfügbar!</a>
-      </div>
-      <div class="streamer">
-        <img src="tharnox.png" alt="Streamer 2">
-        <h3>Tharnox</h3>
-        <p>Twitch</p>
-        <a href="https://www.twitch.tv/tharnox">Jetzt zu Twitch!</a>
-      </div>
+      <!-- Weitere Streamer hier hinzufügen -->
     </div>
   </section>
 
-  <!-- Jetzt Streamer werden -->
-  <section class="join">
-    <h2>Jetzt Streamer werden!</h2>
-    <p>Bist du ein Streamer und möchtest Teil unseres Teams werden? Fülle einfach das Formular aus und bewirb dich!</p>
-    <a href="https://forms.gle/F5UGnAwSipq4LpST8" target="_blank" class="cta-button">Jetzt bewerben</a>
-  </section>
-
-  <!-- Kontakt -->
-  <footer id="contact">
-    <p>Hast du Fragen oder möchtest du Teil unseres Teams werden? <a href="mailto:kontakt@hustensaft.org">Kontaktiere uns</a></p>
-  </footer>
+  <!-- Freshchat Widget -->
+  <script>
+    window.fcWidgetInit = function() {
+      window.fcWidget.init({
+        token: "53af1bc8-1cc5-4953-abca-a0cc3d4bb894",
+        host: "https://wchat.eu.freshchat.com"
+      });
+    };
+    (function(d, id){
+      var fcJS = d.createElement('script');
+      fcJS.id = id;
+      fcJS.async = true;
+      fcJS.src = 'https://wchat.eu.freshchat.com/js/widget.js';
+      var s = d.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(fcJS, s);
+    })(document, 'freshchat-js-sdk');
+  </script>
 
 </body>
 </html>
