@@ -91,9 +91,61 @@
     margin-right: 15px;
     filter: drop-shadow(0 0 5px #0ff);
   }
+
+  /* Seitenmenü */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: 100vh;
+    background: rgba(0, 255, 255, 0.1);
+    border-right: 2px solid #0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1rem;
+    box-shadow: 0 0 15px #0ff88;
+    z-index: 1000;
+  }
+
+  .sidebar-button {
+    width: 50px;
+    height: 50px;
+    margin: 1rem 0;
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid #0ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-button img {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 5px #0ff);
+  }
+
+  .sidebar-button:hover {
+    background: #0ff;
+    transform: scale(1.15);
+  }
 </style>
 </head>
 <body>
+
+<!-- Seitenmenü -->
+<div class="sidebar">
+  <a class="sidebar-button" href="https://pornhub.com" target="_blank" title="PHub">
+    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="Icon 1">
+  </a>
+  <a class="sidebar-button" href="https://freieporno.de" target="_blank" title="FPorno">
+    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="Icon 2">
+  </a>
+</div>
 
 <h1>Willkommen, Maxim</h1>
 
