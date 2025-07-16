@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deine Startseite</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #0ff;
+    font-family: 'Orbitron', monospace, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 15px #0ff;
+  }
+
+  .links {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .link {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #0ff;
+    padding: 1.2rem 2rem;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #0ff;
+    font-size: 1.3rem;
+    letter-spacing: 0.1rem;
+    box-shadow: 0 0 15px #0ff88;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .link::after {
+    content: '↗';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+    font-weight: bold;
+  }
+  .link:hover {
+    background: #0ff;
+    color: #020202;
+    box-shadow: 0 0 25px #0ff;
+    transform: scale(1.1);
+  }
+
+  footer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 70px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #0ff;
+    box-shadow: 0 0 15px #0ff66;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .logo-slider {
+    display: flex;
+    height: 70px;
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .logo-slider img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-right: 15px;
+    filter: drop-shadow(0 0 5px #0ff);
+  }
+
+  /* Seitenmenü */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: 100vh;
+    background: rgba(0, 255, 255, 0.1);
+    border-right: 2px solid #0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1rem;
+    box-shadow: 0 0 15px #0ff88;
+    z-index: 1000;
+  }
+
+  .sidebar-button {
+    width: 50px;
+    height: 50px;
+    margin: 1rem 0;
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid #0ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-button img {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 5px #0ff);
+  }
+
+  .sidebar-button:hover {
+    background: #0ff;
+    transform: scale(1.15);
+  }
+</style>
+</head>
+<body>
+
+
+<h1>Välkomna, Bastu</h1>
+
+<div class="links">
+  <a class="link" href="https://bigtimefm.de" target="_blank" rel="noopener noreferrer">BigTimeFM</a>
+  <a class="link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+  <a class="link" href="https://google.de" target="_blank" rel="noopener noreferrer">Google</a>
+  <a class="link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+  <a class="link" href="https://www.carl-weyprecht-schule.info" target="_blank" rel="noopener noreferrer">CWS</a>
+</div>
+
+
+
+</body>
+</html>
