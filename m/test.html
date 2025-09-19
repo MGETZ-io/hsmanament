@@ -5,45 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Fake Kartenleser POS</title>
   <style>
-    body{margin:0;background:#0b0f14;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
-    .terminal{width:360px;max-width:95vw;background:#1a1f28;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;position:relative}
-    .screen{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
-    .amount{font-size:42px;font-weight:700}
-    .btn{padding:10px 16px;border-radius:8px;background:#1b9b7a;color:white;font-weight:600;cursor:pointer;user-select:none}
+    body{margin:0;background:#0b0f14;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;display:flex;align-items:flex-start;justify-content:center;height:100vh}
+    .terminal{width:360px;max-width:95vw;background:#1a1f28;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;position:relative;cursor:pointer}
+    .screen{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:18px;text-align:center}
+    .amount{font-size:42px;font-weight:700;margin-top:10px}
 
     /* Overlay Screens */
-    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;opacity:0;pointer-events:none;transition:opacity .4s}
+    .overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:flex-start;justify-content:center;flex-direction:column;gap:20px;opacity:0;pointer-events:none;transition:opacity .4s;padding-top:20px}
     .overlay.show{opacity:1;pointer-events:auto}
 
     .overlay h1{margin:0;font-size:24px;text-align:center}
     .overlay span{font-size:16px;opacity:.9;text-align:center}
 
-    .screensaver{background:#000}
+    .screensaver{background:#000;align-items:center;justify-content:center}
     .screensaver img{width:120px;height:auto;opacity:.9}
     .screensaver span{color:#aaa}
 
     .statusScreen{background:#111}
     .success{background:#0e1a12}
+
+    #pinInput{display:none;font-size:24px;text-align:center;letter-spacing:12px;margin-top:10px;background:#222;border:none;color:white;border-radius:8px;padding:8px}
   </style>
 </head>
 <body>
-  <div class="terminal">
+  <div class="terminal" id="terminal">
     <div class="screen" id="mainScreen">
       <div class="amount" id="amount">0,00 €</div>
-      <div class="btn" id="start">Zahlung starten</div>
-      <div class="btn" id="saver">Bildschirmschoner</div>
     </div>
 
     <!-- Screensaver -->
-    <div class="overlay screensaver" id="saverOverlay">
+    <div class="overlay screensaver show" id="saverOverlay">
       <img src="logo.png" alt="Logo">
       <span>Gerät inaktiv</span>
     </div>
 
     <!-- Status / Ablauf -->
     <div class="overlay statusScreen" id="statusOverlay">
-      <h1 id="statusTitle">Karte erkannt</h1>
+      <h1 id="statusTitle">Autorisierung</h1>
       <span id="statusDesc">Bitte warten…</span>
+      <input type="text" id="pinInput" maxlength="6" readonly>
     </div>
 
     <!-- Erfolg -->
@@ -55,62 +55,86 @@
 
   <script>
     const amountEl=document.getElementById('amount');
-    const start=document.getElementById('start');
-    const saver=document.getElementById('saver');
     const saverOverlay=document.getElementById('saverOverlay');
     const statusOverlay=document.getElementById('statusOverlay');
     const successOverlay=document.getElementById('successOverlay');
     const statusTitle=document.getElementById('statusTitle');
     const statusDesc=document.getElementById('statusDesc');
     const methodEl=document.getElementById('method');
-
-    const authSteps=[
-      {title:'Karte erkannt',desc:'Karte wird gelesen…'},
-      {title:'Autorisierung',desc:'Autorisierung läuft…'},
-      {title:'Prüfung',desc:'Bitte unterschreiben oder PIN eingeben…'}
-    ];
+    const terminal=document.getElementById('terminal');
+    const pinInput=document.getElementById('pinInput');
 
     const methods=['Apple Pay','Google Pay','Visa','Mastercard'];
 
     function randomAmount(){
-      const euros=(Math.random()*90+1).toFixed(2);
-      return euros.replace('.',',')+' €';
+      return (Math.random()*90+1).toFixed(2).replace('.',',')+' €';
     }
+
+    let readyForPayment=false;
 
     function startPayment(){
+      if(!readyForPayment) return;
+      readyForPayment=false;
       amountEl.textContent=randomAmount();
-      let step=0;
-      statusTitle.textContent=authSteps[step].title;
-      statusDesc.textContent=authSteps[step].desc;
       statusOverlay.classList.add('show');
+      successOverlay.classList.remove('show');
+      pinInput.style.display='none';
 
-      const interval=setInterval(()=>{
-        step++;
-        if(step<authSteps.length){
-          statusTitle.textContent=authSteps[step].title;
-          statusDesc.textContent=authSteps[step].desc;
+      const steps=[
+        {title:'Autorisierung',desc:'Bitte warten…'}
+      ];
+      let stepIndex=0;
+
+      function nextStep(){
+        if(stepIndex<steps.length){
+          statusTitle.textContent=steps[stepIndex].title;
+          statusDesc.textContent=steps[stepIndex].desc;
+          stepIndex++;
+          setTimeout(nextStep,1500);
         } else {
-          clearInterval(interval);
-          statusOverlay.classList.remove('show');
-          const method=methods[Math.floor(Math.random()*methods.length)];
-          methodEl.textContent='Bezahlmethode: '+method;
-          successOverlay.classList.add('show');
-          
-          // Erfolg-Screen nach 5 Sekunden zurück
-          setTimeout(()=>{
-            successOverlay.classList.remove('show');
-          },5000);
+          if(Math.random()<0.5){
+            statusTitle.textContent='Bitte PIN eingeben:';
+            statusDesc.textContent='';
+            pinInput.style.display='block';
+            pinInput.value='';
+            let pin='';
+            let pinInterval=setInterval(()=>{
+              if(pin.length<4){ pin+='*'; pinInput.value=pin; }
+              else{ clearInterval(pinInterval); showSuccess(); }
+            },500);
+          } else {
+            setTimeout(showSuccess,1000);
+          }
         }
-      },3000);
+      }
+
+      function showSuccess(){
+        statusOverlay.classList.remove('show');
+        pinInput.style.display='none';
+        const method=methods[Math.floor(Math.random()*methods.length)];
+        methodEl.textContent='Bezahlmethode: '+method;
+        successOverlay.classList.add('show');
+        setTimeout(()=>{
+          successOverlay.classList.remove('show');
+          saverOverlay.classList.add('show');
+        },5000);
+      }
+
+      setTimeout(nextStep,1000);
     }
 
-    start.addEventListener('click',startPayment);
-
-    saver.addEventListener('click',()=>{
-      saverOverlay.classList.add('show');
-    });
     saverOverlay.addEventListener('click',()=>{
-      saverOverlay.classList.remove('show');
+      if(!readyForPayment){
+        // erster Klick entfernt Screensaver, bereitet Zahlung vor
+        saverOverlay.classList.remove('show');
+        readyForPayment=true;
+      } 
+    });
+
+    terminal.addEventListener('click',()=>{
+      if(readyForPayment){
+        startPayment();
+      }
     });
 
     amountEl.textContent=randomAmount();
