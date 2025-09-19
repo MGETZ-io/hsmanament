@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Fake Kartenleser POS</title>
+  <style>
+    body{margin:0;background:#0b0f14;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
+    .terminal{width:360px;max-width:95vw;background:#1a1f28;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;position:relative}
+    .screen{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+    .amount{font-size:42px;font-weight:700}
+    .btn{padding:10px 16px;border-radius:8px;background:#1b9b7a;color:white;font-weight:600;cursor:pointer;user-select:none}
+
+    /* Overlay Screens */
+    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;opacity:0;pointer-events:none;transition:opacity .4s}
+    .overlay.show{opacity:1;pointer-events:auto}
+
+    .overlay h1{margin:0;font-size:24px;text-align:center}
+    .overlay span{font-size:16px;opacity:.9;text-align:center}
+
+    .screensaver{background:#000}
+    .screensaver img{width:120px;height:auto;opacity:.9}
+    .screensaver span{color:#aaa}
+
+    .statusScreen{background:#111}
+    .success{background:#0e1a12}
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="screen" id="mainScreen">
+      <div class="amount" id="amount">0,00 €</div>
+      <div class="btn" id="start">Zahlung starten</div>
+      <div class="btn" id="saver">Bildschirmschoner</div>
+    </div>
+
+    <!-- Screensaver -->
+    <div class="overlay screensaver" id="saverOverlay">
+      <img src="logo.png" alt="Logo">
+      <span>Gerät inaktiv</span>
+    </div>
+
+    <!-- Status / Ablauf -->
+    <div class="overlay statusScreen" id="statusOverlay">
+      <h1 id="statusTitle">Karte erkannt</h1>
+      <span id="statusDesc">Bitte warten…</span>
+    </div>
+
+    <!-- Erfolg -->
+    <div class="overlay success" id="successOverlay">
+      <h1>Zahlung erfolgreich ✅</h1>
+      <span id="method"></span>
+    </div>
+  </div>
+
+  <script>
+    const amountEl=document.getElementById('amount');
+    const start=document.getElementById('start');
+    const saver=document.getElementById('saver');
+    const saverOverlay=document.getElementById('saverOverlay');
+    const statusOverlay=document.getElementById('statusOverlay');
+    const successOverlay=document.getElementById('successOverlay');
+    const statusTitle=document.getElementById('statusTitle');
+    const statusDesc=document.getElementById('statusDesc');
+    const methodEl=document.getElementById('method');
+
+    const authSteps=[
+      {title:'Karte erkannt',desc:'Karte wird gelesen…'},
+      {title:'Autorisierung',desc:'Autorisierung läuft…'},
+      {title:'Prüfung',desc:'Bitte unterschreiben oder PIN eingeben…'}
+    ];
+
+    const methods=['Apple Pay','Google Pay','Visa','Mastercard'];
+
+    function randomAmount(){
+      const euros=(Math.random()*90+1).toFixed(2);
+      return euros.replace('.',',')+' €';
+    }
+
+    function startPayment(){
+      amountEl.textContent=randomAmount();
+      let step=0;
+      statusTitle.textContent=authSteps[step].title;
+      statusDesc.textContent=authSteps[step].desc;
+      statusOverlay.classList.add('show');
+
+      const interval=setInterval(()=>{
+        step++;
+        if(step<authSteps.length){
+          statusTitle.textContent=authSteps[step].title;
+          statusDesc.textContent=authSteps[step].desc;
+        } else {
+          clearInterval(interval);
+          statusOverlay.classList.remove('show');
+          const method=methods[Math.floor(Math.random()*methods.length)];
+          methodEl.textContent='Bezahlmethode: '+method;
+          successOverlay.classList.add('show');
+          
+          // Erfolg-Screen nach 5 Sekunden zurück
+          setTimeout(()=>{
+            successOverlay.classList.remove('show');
+          },5000);
+        }
+      },3000);
+    }
+
+    start.addEventListener('click',startPayment);
+
+    saver.addEventListener('click',()=>{
+      saverOverlay.classList.add('show');
+    });
+    saverOverlay.addEventListener('click',()=>{
+      saverOverlay.classList.remove('show');
+    });
+
+    amountEl.textContent=randomAmount();
+  </script>
+</body>
+</html>
