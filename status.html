@@ -1,166 +1,904 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hustensaft Group Status</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #121212;
-  --card-bg: #1e1e1e;
-  --border: #333;
-  --text: #e0e0e0;
-  --muted: #aaa;
-  --green: #22c55e;
-  --yellow: #facc15;
-  --orange: #fb923c;
-  --red: #ef4444;
-  --purple: #9b59b6;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status Dashboard</title>
+    <style>
+        /* Basis Styles */
+        :root {
+            --bs-primary: #5cdd8b;
+            --bs-success: #198754;
+            --bs-warning: #f8a306;
+            --bs-danger: #dc3545;
+            --bs-body-bg: #fff;
+            --bs-body-color: #212529;
+            --bs-border-radius: 50rem;
+            --bs-border-color: #dee2e6;
+        }
+        .dark {
+            --bs-body-bg: #0d1117;
+            --bs-body-color: #b1b8c0;
+            --bs-border-color: #1d2634;
+        }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            transition: all 0.3s ease;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Buttons */
+        .btn {
+            border-radius: var(--bs-border-radius);
+            padding: .375rem .75rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background-color: var(--bs-primary);
+            color: #000;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-outline-primary {
+            color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            background: transparent;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--bs-primary);
+            color: #000;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .dark .card {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--bs-border-color);
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px 12px 0 0 !important;
+        }
+        .dark .card-header {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--bs-border-color);
+        }
+        
+        /* Status System */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: var(--bs-border-radius);
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-operational { background: var(--bs-success); color: white; }
+        .status-degraded { background: var(--bs-warning); color: black; }
+        .status-outage { background: var(--bs-danger); color: white; }
+        .status-maintenance { background: #1747f5; color: white; }
+        
+        /* HP Bar */
+        .hp-bar-big {
+            display: flex;
+            gap: 6px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .beat {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--bs-border-radius);
+            background: var(--bs-primary);
+            transition: all 0.3s ease;
+        }
+        .beat:hover {
+            transform: scale(1.1);
+        }
+        .beat.empty { background: #e9ecef; }
+        .beat.down { background: var(--bs-danger); }
+        .beat.pending { background: var(--bs-warning); }
+        .beat.maintenance { background: #1747f5; }
+        .dark .beat.empty { background: #495057; }
+        
+        /* Service Items */
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bs-border-color);
+        }
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        .service-info {
+            flex: 1;
+        }
+        .service-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .service-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        /* Group Headers */
+        .group-header {
+            background: rgba(0,0,0,0.03);
+            padding: 8px 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            border-left: 3px solid var(--bs-primary);
+        }
+        .dark .group-header {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Grid System */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 300px;
+        }
+        
+        /* Toast System */
+        .Vue-Toastification__container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .Vue-Toastification__toast {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 280px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .Vue-Toastification__toast--success { background: var(--bs-success); }
+        .Vue-Toastification__toast--error { background: var(--bs-danger); }
+        .Vue-Toastification__toast--warning { background: var(--bs-warning); color: black; }
+        .Vue-Toastification__toast--info { background: #17a2b8; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .dark .stat-item {
+            background: rgba(255,255,255,0.05);
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        /* Last Update */
+        .last-update {
+            text-align: center;
+            padding: 15px;
+            color: #6c757d;
+            font-size: 12px;
+            border-top: 1px solid var(--bs-border-color);
+            margin-top: 2rem;
+        }
+        
+        /* Service Icons */
+        .service-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
 
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-header {
-  padding: 40px 22px;
-  text-align: center;
-}
-
-h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-p {
-  margin-top: 6px;
-  color: var(--muted);
-}
-
-.wrapper {
-  max-width: 1000px;
-  margin: 30px auto;
-  padding: 0 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 24px;
-  flex: 1 1 300px;
-  min-width: 280px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-}
-
-.card h2 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-  color: var(--muted);
-  font-weight: 600;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 6px;
-}
-
-.service {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  padding: 8px 0;
-  font-size: 0.95rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.service:last-child {
-  border-bottom: none;
-}
-
-.status-operational { color: var(--green); font-weight: 600; }
-.status-degraded_performance { color: var(--yellow); font-weight: 600; }
-.status-partial_outage { color: var(--orange); font-weight: 600; }
-.status-major_outage { color: var(--red); font-weight: 600; }
-.status-btfm { color: var(--purple); font-weight: 600; }
-</style>
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--bs-primary);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: grayscale(30%);
+            transition: all 0.3s ease;
+        }
+        .dark .logo {
+            filter: grayscale(30%) brightness(1.2);
+        }
+        .logo:hover {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+        
+        /* Maintenance Section */
+        .maintenance-item {
+            background: rgba(23, 71, 245, 0.1);
+            border: 1px solid rgba(23, 71, 245, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .dark .maintenance-item {
+            background: rgba(23, 71, 245, 0.15);
+        }
+        
+        /* Incident Styles */
+        .incident-item {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .dark .incident-item {
+            background: rgba(220, 53, 69, 0.15);
+        }
+        
+        .impact-critical { border-left: 4px solid var(--bs-danger); }
+        .impact-major { border-left: 4px solid var(--bs-warning); }
+        .impact-minor { border-left: 4px solid var(--bs-primary); }
+        
+        /* Status Indicator */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-indicator.operational { background: var(--bs-success); }
+        .status-indicator.degraded { background: var(--bs-warning); }
+        .status-indicator.outage { background: var(--bs-danger); }
+        .status-indicator.maintenance { background: #1747f5; }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="Vue-Toastification__container"></div>
 
-<header>
-  <h1>Hustensaft Group Status</h1>
-  <p id="global-status">Lade Status …</p>
-</header>
+    <!-- Navigation -->
+    <nav class="navbar container">
+        <div class="navbar-brand">
+            <h2 style="margin: 0;">📊 System Status Dashboard</h2>
+        </div>
+        <div class="navbar-nav">
+            <button class="btn btn-outline-primary" onclick="toggleTheme()">
+                🌙 Theme
+            </button>
+            <button class="btn btn-primary" onclick="loadStatusData()" style="margin-left: 10px;">
+                <span class="spinner" id="refreshSpinner" style="display: none;"></span>
+                🔄 Aktualisieren
+            </button>
+        </div>
+    </nav>
 
-<div class="wrapper" id="status-wrapper">
-  <!-- Gruppenkarten hier -->
-</div>
+    <main class="container">
+        <!-- Logo Section -->
+        <div class="logo-container">
+            <img src="https://api.hustensaft.org/HGrouplogo.png" alt="HGroup Logo" class="logo" onerror="this.style.display='none'">
+            <img src="https://api.hustensaft.org/btfmprojects.png" alt="BTFM Projects Logo" class="logo" onerror="this.style.display='none'">
+        </div>
 
-<script>
-const URL = "https://hustensaftmanagment.statuspage.io/api/v2/summary.json";
+        <!-- Gesamtstatus -->
+        <div class="card">
+            <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">Gesamtübersicht</h3>
+                    <span class="status-badge" id="overallStatus">
+                        <span class="spinner"></span>Lade...
+                    </span>
+                </div>
+                
+                <!-- Status Overview -->
+                <div class="hp-bar-big" id="statusOverview">
+                    <div class="beat empty"></div>
+                    <div class="beat empty"></div>
+                    <div class="beat empty"></div>
+                    <div class="beat empty"></div>
+                    <div class="beat empty"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <span class="service-meta">Letzte Aktualisierung: <span id="lastUpdate">Wird geladen...</span></span>
+                    <span class="service-meta">Nächste Prüfung: <span id="nextCheck">60s</span></span>
+                </div>
+            </div>
+        </div>
 
-function detectGroup(name) {
-  if (name.includes("Discord Hosting")) return "Discord Hosting";
-  if (name.includes("API")) return "API's";
-  if (name.startsWith("[BTFM Projects]")) return "BTFM Projects";
-  return "Sonstige Systeme";
-}
+        <!-- Services Grid -->
+        <div class="row">
+            <!-- Components -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 style="margin: 0;">🔧 System Komponenten</h4>
+                    </div>
+                    <div class="card-body" id="componentsList">
+                        <div class="service-item">
+                            <div class="service-info">
+                                <div class="service-name">
+                                    <span class="service-icon">⏳</span>
+                                    Lade Komponenten...
+                                </div>
+                            </div>
+                            <span class="status-badge status-degraded">Lädt</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-function createServiceLine(comp) {
-  let statusClass = 'status-' + comp.status;
-  if (comp.name.startsWith("[BTFM Projects]")) statusClass = 'status-btfm';
-  return `<div class="service"><span>${comp.name}</span><span class="${statusClass}">${comp.status.replace(/_/g," ")}</span></div>`;
-}
+            <!-- Incidents & Maintenance -->
+            <div class="col">
+                <!-- Incidents -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 style="margin: 0;">🚨 Vorfälle</h4>
+                    </div>
+                    <div class="card-body" id="incidentsList">
+                        <div class="service-item">
+                            <div class="service-info">
+                                <div class="service-name">⏳ Lade Vorfälle...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Maintenance -->
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-header">
+                        <h4 style="margin: 0;">🔧 Wartungsarbeiten</h4>
+                    </div>
+                    <div class="card-body" id="maintenanceList">
+                        <div class="service-item">
+                            <div class="service-info">
+                                <div class="service-name">⏳ Lade Wartungen...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-async function loadStatus() {
-  try {
-    const res = await fetch(URL);
-    const data = await res.json();
-    document.getElementById("global-status").textContent = data.status.description || "Unbekannt";
+        <!-- Statistics -->
+        <div class="card">
+            <div class="card-body">
+                <h4 style="margin-bottom: 1rem;">📊 System Statistiken</h4>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-item">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Komponenten</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Operational</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Probleme</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">-</div>
+                        <div class="stat-label">Ausfälle</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const components = data.components || [];
-    const wrapper = document.getElementById("status-wrapper");
-    wrapper.innerHTML = "";
+        <div class="last-update">
+            🔄 Auto-Update alle 60 Sekunden • 
+            <button class="btn btn-outline-primary" style="padding: 2px 8px; font-size: 12px;" onclick="loadStatusData()">
+                Jetzt aktualisieren
+            </button>
+        </div>
+    </main>
 
-    const groups = {};
-    components.forEach(c => {
-      const group = detectGroup(c.name);
-      if (!groups[group]) groups[group] = [];
-      groups[group].push(c);
-    });
+    <script>
+        // API Konfiguration
+        const STATUSPAGE_API = 'https://hustensaftmanagment.statuspage.io/api/v2';
+        
+        // Status Mapping
+        const STATUS_MAP = {
+            'operational': {
+                badge: 'status-operational',
+                text: 'Operational',
+                beat: 'beat',
+                color: 'var(--bs-success)',
+                indicator: 'operational'
+            },
+            'degraded_performance': {
+                badge: 'status-degraded',
+                text: 'Eingeschränkt',
+                beat: 'beat pending',
+                color: 'var(--bs-warning)',
+                indicator: 'degraded'
+            },
+            'partial_outage': {
+                badge: 'status-outage',
+                text: 'Teilausfall',
+                beat: 'beat down',
+                color: 'var(--bs-danger)',
+                indicator: 'outage'
+            },
+            'major_outage': {
+                badge: 'status-outage',
+                text: 'Ausfall',
+                beat: 'beat down',
+                color: 'var(--bs-danger)',
+                indicator: 'outage'
+            },
+            'under_maintenance': {
+                badge: 'status-maintenance',
+                text: 'Wartung',
+                beat: 'beat maintenance',
+                color: '#1747f5',
+                indicator: 'maintenance'
+            }
+        };
 
-    for (const groupName in groups) {
-      const card = document.createElement("div");
-      card.className = "card";
+        // Impact Mapping
+        const IMPACT_MAP = {
+            'critical': { class: 'impact-critical', text: 'Kritisch' },
+            'major': { class: 'impact-major', text: 'Hoch' },
+            'minor': { class: 'impact-minor', text: 'Gering' },
+            'none': { class: '', text: 'Keine' }
+        };
 
-      const title = document.createElement("h2");
-      title.textContent = groupName;
-      card.appendChild(title);
+        // API Calls
+        async function fetchStatusData() {
+            try {
+                const response = await fetch(`${STATUSPAGE_API}/summary.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Fehler beim Laden der Statusdaten:', error);
+                throw error;
+            }
+        }
 
-      groups[groupName].forEach(comp => {
-        card.innerHTML += createServiceLine(comp);
-      });
+        async function fetchIncidents() {
+            try {
+                const response = await fetch(`${STATUSPAGE_API}/incidents.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.incidents || [];
+            } catch (error) {
+                console.error('Fehler beim Laden der Vorfälle:', error);
+                return [];
+            }
+        }
 
-      wrapper.appendChild(card);
-    }
+        async function fetchScheduledMaintenances() {
+            try {
+                const response = await fetch(`${STATUSPAGE_API}/scheduled-maintenances.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.scheduled_maintenances || [];
+            } catch (error) {
+                console.error('Fehler beim Laden der Wartungen:', error);
+                return [];
+            }
+        }
 
-  } catch(e) {
-    document.getElementById("global-status").textContent = "Fehler beim Laden";
-  }
-}
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-bs-theme', newTheme);
+            document.body.classList.toggle('dark', newTheme === 'dark');
+            
+            showToast(`Theme zu ${newTheme} gewechselt`, 'info');
+            localStorage.setItem('theme', newTheme);
+        }
 
-loadStatus();
-setInterval(loadStatus, 60000);
-</script>
+        // Toast System
+        function showToast(message, type = 'info') {
+            const container = document.querySelector('.Vue-Toastification__container');
+            const toast = document.createElement('div');
+            toast.className = `Vue-Toastification__toast Vue-Toastification__toast--${type}`;
+            toast.innerHTML = `
+                <div>${message}</div>
+                <button style="background: none; border: none; color: inherit; cursor: pointer; font-size: 18px;" 
+                        onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
 
+        // Daten verarbeiten und anzeigen
+        async function loadStatusData() {
+            const refreshBtn = document.getElementById('refreshSpinner');
+            refreshBtn.style.display = 'inline-block';
+            
+            try {
+                // Alle Daten parallel laden
+                const [statusData, incidents, maintenances] = await Promise.all([
+                    fetchStatusData(),
+                    fetchIncidents(),
+                    fetchScheduledMaintenances()
+                ]);
+                
+                updateUI(statusData, incidents, maintenances);
+                showToast('✅ Status erfolgreich aktualisiert', 'success');
+            } catch (error) {
+                showToast('❌ Fehler beim Laden der Statusdaten', 'error');
+                console.error('Fehler:', error);
+            } finally {
+                refreshBtn.style.display = 'none';
+                updateLastUpdateTime();
+            }
+        }
+
+        // UI aktualisieren
+        function updateUI(statusData, incidents, maintenances) {
+            updateOverallStatus(statusData);
+            updateComponents(statusData.components);
+            updateIncidents(incidents);
+            updateMaintenances(maintenances);
+            updateStatistics(statusData, incidents, maintenances);
+        }
+
+        // Gesamtstatus aktualisieren
+        function updateOverallStatus(data) {
+            const overallStatus = document.getElementById('overallStatus');
+            const statusOverview = document.getElementById('statusOverview');
+            
+            const statusInfo = STATUS_MAP[data.status.indicator] || STATUS_MAP.operational;
+            
+            overallStatus.className = `status-badge ${statusInfo.badge}`;
+            overallStatus.textContent = data.status.description;
+            
+            // Status Overview mit Komponenten
+            statusOverview.innerHTML = '';
+            const componentsToShow = data.components.slice(0, 8);
+            componentsToShow.forEach(component => {
+                const componentStatus = STATUS_MAP[component.status] || STATUS_MAP.operational;
+                const beat = document.createElement('div');
+                beat.className = componentStatus.beat;
+                beat.title = `${component.name} - ${componentStatus.text}`;
+                statusOverview.appendChild(beat);
+            });
+            
+            // Fülle mit leeren Beats auf, falls weniger als 8 Komponenten
+            for (let i = componentsToShow.length; i < 8; i++) {
+                const beat = document.createElement('div');
+                beat.className = 'beat empty';
+                statusOverview.appendChild(beat);
+            }
+        }
+
+        // Komponenten aktualisieren
+        function updateComponents(components) {
+            const componentsList = document.getElementById('componentsList');
+            componentsList.innerHTML = '';
+            
+            // Gruppieren der Komponenten basierend auf ihrem Namen
+            const groups = {};
+            
+            components.forEach(component => {
+                // Gruppennamen aus dem Komponentennamen extrahieren
+                let groupName = 'Allgemein';
+                
+                if (component.name.includes('API')) {
+                    groupName = 'APIs';
+                } else if (component.name.includes('BTFM')) {
+                    groupName = 'BTFM Projects';
+                } else if (component.name.includes('Discord')) {
+                    groupName = 'Discord Hosting';
+                } else if (component.name.includes('Websites')) {
+                    groupName = 'Sonstige Systeme';
+                }
+                
+                if (!groups[groupName]) {
+                    groups[groupName] = [];
+                }
+                
+                groups[groupName].push(component);
+            });
+            
+            // Komponenten nach Gruppen anzeigen
+            Object.keys(groups).forEach(groupName => {
+                // Gruppen-Header
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'group-header';
+                groupHeader.textContent = groupName;
+                componentsList.appendChild(groupHeader);
+                
+                // Komponenten in dieser Gruppe
+                groups[groupName].forEach(component => {
+                    const statusInfo = STATUS_MAP[component.status] || STATUS_MAP.operational;
+                    
+                    const serviceItem = document.createElement('div');
+                    serviceItem.className = 'service-item';
+                    serviceItem.innerHTML = `
+                        <div class="service-info">
+                            <div class="service-name">
+                                <span class="service-icon">${getComponentIcon(component.name)}</span>
+                                ${component.name}
+                            </div>
+                            <div class="service-meta">
+                                ${component.description || 'Systemkomponente'}
+                            </div>
+                        </div>
+                        <span class="status-badge ${statusInfo.badge}">
+                            <span class="status-indicator ${statusInfo.indicator}"></span>
+                            ${statusInfo.text}
+                        </span>
+                    `;
+                    componentsList.appendChild(serviceItem);
+                });
+            });
+        }
+
+        // Vorfälle aktualisieren
+        function updateIncidents(incidents) {
+            const incidentsList = document.getElementById('incidentsList');
+            incidentsList.innerHTML = '';
+            
+            // Filtere nur aktive Vorfälle
+            const activeIncidents = incidents.filter(incident => 
+                incident.status !== 'resolved' && incident.status !== 'postmortem'
+            );
+            
+            if (activeIncidents.length === 0) {
+                incidentsList.innerHTML = `
+                    <div class="service-item">
+                        <div class="service-info">
+                            <div class="service-name">✅ Keine aktiven Vorfälle</div>
+                            <div class="service-meta">Alle Systeme funktionieren normal</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            activeIncidents.forEach(incident => {
+                const impactInfo = IMPACT_MAP[incident.impact] || IMPACT_MAP.none;
+                const incidentItem = document.createElement('div');
+                incidentItem.className = `incident-item ${impactInfo.class}`;
+                
+                const latestUpdate = incident.incident_updates?.[0] || {};
+                const startTime = new Date(incident.started_at).toLocaleString('de-DE');
+                
+                incidentItem.innerHTML = `
+                    <div class="service-info">
+                        <div class="service-name">🚨 ${incident.name}</div>
+                        <div class="service-meta" style="color: var(--bs-danger);">
+                            Gestartet: ${startTime} • Auswirkung: ${impactInfo.text}
+                        </div>
+                        <div class="service-meta">${latestUpdate.body || 'Keine Details verfügbar'}</div>
+                        <div class="service-meta" style="font-size: 10px; margin-top: 5px;">
+                            Status: ${incident.status} • Aktualisiert: ${new Date(latestUpdate.updated_at || incident.updated_at).toLocaleString('de-DE')}
+                        </div>
+                    </div>
+                `;
+                incidentsList.appendChild(incidentItem);
+            });
+        }
+
+        // Wartungen aktualisieren
+        function updateMaintenances(maintenances) {
+            const maintenanceList = document.getElementById('maintenanceList');
+            maintenanceList.innerHTML = '';
+            
+            // Filtere nur geplante und laufende Wartungen
+            const activeMaintenances = maintenances.filter(maintenance => 
+                maintenance.status !== 'completed' && maintenance.status !== 'cancelled'
+            );
+            
+            if (activeMaintenances.length === 0) {
+                maintenanceList.innerHTML = `
+                    <div class="service-item">
+                        <div class="service-info">
+                            <div class="service-name">✅ Keine geplanten Wartungen</div>
+                            <div class="service-meta">Derzeit sind keine Wartungen geplant</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            activeMaintenances.forEach(maintenance => {
+                const maintenanceItem = document.createElement('div');
+                maintenanceItem.className = 'maintenance-item';
+                
+                const startTime = new Date(maintenance.scheduled_for).toLocaleString('de-DE');
+                const endTime = new Date(maintenance.scheduled_until).toLocaleString('de-DE');
+                
+                maintenanceItem.innerHTML = `
+                    <div class="service-info">
+                        <div class="service-name">🔧 ${maintenance.name}</div>
+                        <div class="service-meta" style="color: #1747f5;">
+                            Geplant: ${startTime} - ${endTime}
+                        </div>
+                        <div class="service-meta">${maintenance.incident_updates?.[0]?.body || maintenance.status}</div>
+                        <div class="service-meta" style="font-size: 10px; margin-top: 5px;">
+                            Status: ${maintenance.status}
+                        </div>
+                    </div>
+                `;
+                maintenanceList.appendChild(maintenanceItem);
+            });
+        }
+
+        // Statistiken aktualisieren
+        function updateStatistics(statusData, incidents, maintenances) {
+            const statsGrid = document.getElementById('statsGrid');
+            const components = statusData.components;
+            
+            const operationalCount = components.filter(c => c.status === 'operational').length;
+            const degradedCount = components.filter(c => c.status === 'degraded_performance').length;
+            const outageCount = components.filter(c => c.status === 'partial_outage' || c.status === 'major_outage').length;
+            const maintenanceCount = components.filter(c => c.status === 'under_maintenance').length;
+            
+            const activeIncidents = incidents.filter(i => 
+                i.status !== 'resolved' && i.status !== 'postmortem'
+            ).length;
+            
+            const activeMaintenances = maintenances.filter(m => 
+                m.status !== 'completed' && m.status !== 'cancelled'
+            ).length;
+            
+            statsGrid.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--bs-primary);">${components.length}</div>
+                    <div class="stat-label">Komponenten</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--bs-success);">${operationalCount}</div>
+                    <div class="stat-label">Operational</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--bs-warning);">${activeIncidents}</div>
+                    <div class="stat-label">Aktive Vorfälle</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #1747f5;">${activeMaintenances}</div>
+                    <div class="stat-label">Geplante Wartungen</div>
+                </div>
+            `;
+        }
+
+        // Komponenten-Icons
+        function getComponentIcon(componentName) {
+            const icons = {
+                'API': '🔗',
+                'Website': '🌍',
+                'Server': '🖥️',
+                'Discord': '🎮',
+                'BTFM': '📊'
+            };
+            
+            for (const [key, icon] of Object.entries(icons)) {
+                if (componentName.toLowerCase().includes(key.toLowerCase())) {
+                    return icon;
+                }
+            }
+            return '🔧';
+        }
+
+        // Letzte Aktualisierung
+        function updateLastUpdateTime() {
+            const lastUpdate = document.getElementById('lastUpdate');
+            const now = new Date();
+            lastUpdate.textContent = now.toLocaleTimeString('de-DE');
+        }
+
+        // Auto-Update
+        let updateInterval;
+        function startAutoUpdate() {
+            updateInterval = setInterval(loadStatusData, 60000); // Alle 60 Sekunden
+        }
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme aus localStorage laden
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            document.body.classList.toggle('dark', savedTheme === 'dark');
+            
+            // Statusdaten laden
+            loadStatusData();
+            startAutoUpdate();
+        });
+    </script>
 </body>
 </html>
