@@ -1,111 +1,126 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hustensaft Group — Status</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hustensaft Group Status</title>
 
 <style>
-    :root {
-        --bg: #f8fafc;
-        --card: #ffffff;
-        --border: #e2e8f0;
-        --text: #0f172a;
-        --muted: #64748b;
+/* ---------- Hostvora-Style ---------- */
+:root {
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
 
-        --green: #22c55e;
-        --yellow: #facc15;
-        --orange: #fb923c;
-        --red: #ef4444;
-    }
+    --green: #22c55e;
+    --yellow: #facc15;
+    --orange: #fb923c;
+    --red: #ef4444;
+}
 
-    body {
-        font-family: "Inter", system-ui, Arial, sans-serif;
-        background: var(--bg);
-        margin: 0;
-        color: var(--text);
-    }
+body {
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
 
-    header {
-        padding: 36px 28px;
-        text-align: center;
-        border-bottom: 1px solid var(--border);
-        background: white;
-    }
+/* Header */
+header {
+    background: white;
+    padding: 40px 22px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+header p {
+    margin: 6px 0 0;
+    font-size: 1rem;
+    color: var(--muted);
+}
 
-    header h1 {
-        margin: 0;
-        font-size: 2rem;
-        font-weight: 700;
-    }
+/* Wrapper */
+.wrapper {
+    max-width: 860px;
+    margin: 36px auto;
+    padding: 0 18px;
+}
 
-    header p {
-        margin: 6px 0 0;
-        color: var(--muted);
-        font-size: 1rem;
-    }
+/* Cards */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 26px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
 
-    .wrapper {
-        max-width: 860px;
-        margin: 34px auto;
-        padding: 0 18px;
-    }
+.card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
 
-    .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px 24px;
-        margin-bottom: 22px;
-    }
+/* Komponenten */
+.component {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.component:last-child {
+    border-bottom: none;
+}
 
-    .comp-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
+/* Gruppen */
+.group {
+    margin-bottom: 16px;
+}
+.group .group-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+}
 
-    .component {
-        display: flex;
-        justify-content: space-between;
-        padding: 14px 0;
-        border-bottom: 1px solid var(--border);
-    }
+/* Status-Badges */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    text-transform: capitalize;
+}
+.operational { background: var(--green); }
+.degraded_performance { background: var(--yellow); }
+.partial_outage { background: var(--orange); }
+.major_outage { background: var(--red); }
 
-    .component:last-child {
-        border-bottom: none;
-    }
+/* Vorfälle */
+.incident {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+.incident:last-child { border-bottom: none; }
 
-    .status-badge {
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: white;
-        text-transform: capitalize;
-    }
-
-    .operational { background: var(--green); }
-    .degraded_performance { background: var(--yellow); }
-    .partial_outage { background: var(--orange); }
-    .major_outage { background: var(--red); }
-
-    .incident {
-        padding: 14px 0;
-        border-bottom: 1px solid var(--border);
-    }
-    .incident:last-child { border-bottom:none; }
-
-    .incident-title {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 4px;
-    }
-    .incident-time {
-        font-size: 0.85rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-    }
+.incident-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.incident-time {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
 </style>
 </head>
 <body>
@@ -117,13 +132,15 @@
 
 <div class="wrapper">
 
+    <!-- Systemstatus -->
     <div class="card">
-        <div class="comp-title">Systemstatus</div>
-        <div id="components-list">Wird geladen…</div>
+        <div class="card-title">Systemstatus</div>
+        <div id="components-groups">Wird geladen…</div>
     </div>
 
+    <!-- Vorfälle -->
     <div class="card">
-        <div class="comp-title">Vorfälle</div>
+        <div class="card-title">Vorfälle</div>
         <div id="incidents-list">Wird geladen…</div>
     </div>
 
@@ -133,47 +150,85 @@
 const PAGE = "36j0fv3xt22c";
 const API = `https://${PAGE}.statuspage.io/api/v2`;
 
-function isoToLocal(iso){
-    if(!iso) return "";
+function isoToLocal(iso) {
+    if (!iso) return "";
     return new Date(iso).toLocaleString("de-DE");
 }
 
-async function loadStatus(){
+async function loadStatus() {
     const res = await fetch(`${API}/summary.json`);
     const data = await res.json();
     render(data);
 }
 
-function render(data){
-    // === Global Header Status ===
-    const status = data.status?.description || "Unbekannt";
-    document.getElementById("global-status").textContent = status;
+function render(data) {
 
-    // === Komponenten ===
-    const compList = document.getElementById("components-list");
-    compList.innerHTML = "";
+    /* GLOBAL STATUS */
+    document.getElementById("global-status").textContent =
+        data.status?.description || "Unbekannt";
 
-    data.components.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "component";
-        row.innerHTML = `
-            <div>${c.name}</div>
-            <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
-        `;
-        compList.appendChild(row);
+    /* GRUPPEN + KOMPONENTEN */
+    const container = document.getElementById("components-groups");
+    container.innerHTML = "";
+
+    // Groups first
+    const groups = data.component_groups;
+    const components = data.components;
+
+    groups.forEach(group => {
+        const g = document.createElement("div");
+        g.className = "group";
+
+        g.innerHTML = `<div class="group-title">${group.name}</div>`;
+
+        // Filter components inside this group
+        const groupComponents = components.filter(c => c.group_id === group.id);
+
+        groupComponents.forEach(c => {
+            const row = document.createElement("div");
+            row.className = "component";
+            row.innerHTML = `
+                <div>${c.name}</div>
+                <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
+            `;
+            g.appendChild(row);
+        });
+
+        container.appendChild(g);
     });
 
-    // === Vorfälle ===
+    // Components without group
+    const ungrouped = components.filter(c => !c.group_id);
+    if (ungrouped.length > 0) {
+        const g = document.createElement("div");
+        g.className = "group";
+        g.innerHTML = `<div class="group-title">Weitere Systeme</div>`;
+
+        ungrouped.forEach(c => {
+            const row = document.createElement("div");
+            row.className = "component";
+            row.innerHTML = `
+                <div>${c.name}</div>
+                <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
+            `;
+            g.appendChild(row);
+        });
+
+        container.appendChild(g);
+    }
+
+    /* INCIDENTS */
     const incList = document.getElementById("incidents-list");
     incList.innerHTML = "";
 
-    if(data.incidents.length === 0){
+    if (data.incidents.length === 0) {
         incList.textContent = "Keine aktuellen Vorfälle.";
         return;
     }
 
     data.incidents.forEach(i => {
         const last = i.incident_updates?.[i.incident_updates.length - 1];
+
         const box = document.createElement("div");
         box.className = "incident";
 
