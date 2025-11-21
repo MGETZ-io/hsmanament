@@ -5,56 +5,130 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Hustensaft Group — Status</title>
   <style>
-    body { font-family: system-ui, Arial, sans-serif; max-width:900px; margin:28px auto; padding:0 16px; color:#111; background:#fafafa; }
-    header { display:flex; align-items:center; gap:12px; padding-bottom:10px; border-bottom:1px solid #ddd; }
+    /* --- GLOBAL --- */
+    :root {
+      --bg: #f8f9fa;
+      --header-bg: #1a1a1a;
+      --text: #111;
+      --muted: #6c757d;
+      --card-bg: #ffffff;
+      --success: #28a745;
+      --warning: #ffc107;
+      --alert: #fd7e14;
+      --critical: #dc3545;
+      --accent: #7c5cff;
+    }
 
-    .indicator { width:18px; height:18px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+
+    header h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
+
+    main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+    h2 { margin-top: 40px; margin-bottom: 20px; font-weight: 600; }
+
+    /* --- INDICATORS --- */
+    .indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
     .indicator.none { background:#6c757d; }
-    .indicator.minor { background:#f0ad4e; }
+    .indicator.minor { background:#ffc107; }
     .indicator.major { background:#fd7e14; }
     .indicator.critical { background:#dc3545; }
+    .indicator.operational { background: #28a745; }
 
-    h1 { margin:0; font-size:1.4rem; }
-    h2 { margin-top:28px; }
+    /* --- GROUPS --- */
+    .group {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      overflow: hidden;
+      border: 1px solid #e3e3e3;
+    }
+    .group-title {
+      padding: 15px 20px;
+      font-weight: 600;
+      background: #f1f1f1;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .group-title:hover { background: #e2e2e2; }
 
-    /* Gruppen */
-    .group { margin-top:18px; border-radius:6px; border:1px solid #ddd; background:white; }
-    .group-title { padding:12px; background:#f2f2f2; font-weight:bold; border-bottom:1px solid #ddd; }
+    .group-content { padding: 15px 20px; }
 
-    /* Komponenten */
-    .component { padding:12px; border-bottom:1px solid #eee; border-left-width:6px; border-left-style:solid; }
-    .component:last-child { border-bottom:0; }
+    /* --- COMPONENTS --- */
+    .component {
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border-left: 6px solid;
+      border-radius: 6px;
+      background: #fafafa;
+      transition: transform 0.2s;
+    }
+    .component:hover { transform: translateY(-2px); }
 
-    .component.operational { border-left-color: #28a745; }
-    .component.degraded_performance { border-left-color: #ffc107; }
-    .component.partial_outage { border-left-color: #fd7e14; }
-    .component.major_outage { border-left-color: #dc3545; }
+    .component.operational { border-left-color: var(--success); }
+    .component.degraded_performance { border-left-color: var(--warning); }
+    .component.partial_outage { border-left-color: var(--alert); }
+    .component.major_outage { border-left-color: var(--critical); }
 
-    .muted { color:#666; font-size:0.9rem; }
-    .updated { font-size:0.85rem; color:#666; margin-top:6px; }
+    .component strong { font-weight: 600; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    .updated { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
 
-    /* Incidents */
-    .incident { padding:12px; border-radius:6px; background:#fff3f3; border:1px solid #ffc9c9; margin-bottom:10px; }
+    /* --- INCIDENTS --- */
+    .incident {
+      padding: 15px 20px;
+      border-radius: 8px;
+      background: #fff3f3;
+      border: 1px solid #ffc9c9;
+      margin-bottom: 15px;
+    }
+
+    /* --- COLLAPSIBLE --- */
+    .collapsed .group-content { display: none; }
   </style>
 </head>
 <body>
   <header>
+    <h1>Hustensaft Group Status</h1>
     <div id="page-indicator" class="indicator none"></div>
-    <div>
-      <h1 id="page-name">Status</h1>
-      <div id="page-status" class="muted">Lade Status …</div>
-    </div>
   </header>
 
-  <section class="components">
-    <h2>Servergruppen</h2>
-    <div id="groups-list">Lade Gruppen …</div>
-  </section>
+  <main>
+    <section class="components">
+      <h2>Servergruppen</h2>
+      <div id="groups-list">Lade Gruppen …</div>
+    </section>
 
-  <section class="incidents">
-    <h2>Offene Vorfälle</h2>
-    <div id="incidents-list">Lade Vorfälle …</div>
-  </section>
+    <section class="incidents">
+      <h2>Offene Vorfälle</h2>
+      <div id="incidents-list">Lade Vorfälle …</div>
+    </section>
+  </main>
 
   <script>
     const PAGE = '36j0fv3xt22c';
@@ -71,22 +145,21 @@
         const data = await res.json();
         render(data);
       } catch (e) {
-        document.getElementById('page-status').textContent = "Fehler: " + e;
+        document.getElementById('groups-list').textContent = "Fehler beim Laden: " + e;
       }
     }
 
     function render(data) {
-      document.getElementById('page-name').textContent = data.page.name;
-      document.getElementById('page-status').textContent = data.status.description;
-
+      // PAGE HEADER
       document.getElementById('page-indicator').className =
-        "indicator " + data.status.indicator;
+        "indicator " + (data.status.indicator || "none");
 
+      // GROUPS
       const groupsList = document.getElementById('groups-list');
       groupsList.innerHTML = "";
 
-      // GRUPPEN ERSTELLEN
-      const groups = data.components.filter(c => c.group);
+      // Sortiere nach Gruppenname
+      const groups = data.components.filter(c => c.group).sort((a,b) => a.name.localeCompare(b.name));
 
       groups.forEach(group => {
         const groupBox = document.createElement('div');
@@ -95,10 +168,11 @@
         const title = document.createElement('div');
         title.className = "group-title";
         title.textContent = group.name;
+        title.onclick = () => groupBox.classList.toggle('collapsed');
 
         const inner = document.createElement('div');
+        inner.className = "group-content";
 
-        // Komponenten in dieser Gruppe
         group.components.forEach(id => {
           const comp = data.components.find(c => c.id === id);
           if (!comp) return;
@@ -122,7 +196,6 @@
       // INCIDENTS
       const incList = document.getElementById('incidents-list');
       incList.innerHTML = "";
-
       if (!data.incidents.length) {
         incList.textContent = "Keine offenen Vorfälle.";
       } else {
