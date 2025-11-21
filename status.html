@@ -1,60 +1,122 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hustensaft Group Status</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f9fafb;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --green: #22c55e;
-      --yellow: #facc15;
-      --orange: #fb923c;
-      --red: #ef4444;
-    }
-    body { margin:0; background: var(--bg); font-family: Inter, sans-serif; color: var(--text);}
-    header { background: white; padding:40px 22px; text-align:center; border-bottom:1px solid var(--border);}
-    h1 { margin:0; font-size:2rem; font-weight:700;}
-    p { margin-top:6px; color: var(--muted);}
-    .wrapper { max-width:820px; margin:30px auto; padding:0 16px;}
-    .card { background: var(--card); border:1px solid var(--border); border-radius:10px; padding:20px 24px; margin-bottom:26px; box-shadow:0 2px 5px rgba(0,0,0,0.03);}
-    .card-title { font-size:1.2rem; font-weight:600; margin-bottom:16px;}
-    .group-title { font-weight:600; margin:16px 0 10px; font-size:1.05rem; color:#000;}
-    .component { padding:14px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;}
-    .component:last-child { border-bottom:none;}
-    .status-badge { font-weight:600; text-transform:capitalize;}
-    .operational { color: var(--green);}
-    .degraded_performance { color: var(--yellow);}
-    .partial_outage { color: var(--orange);}
-    .major_outage { color: var(--red);}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hustensaft Group Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f9fafb;
+    --card-bg: #ffffff;
+    --border: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --green: #22c55e;
+    --yellow: #facc15;
+    --orange: #fb923c;
+    --red: #ef4444;
+    --purple: #9b59b6; /* Darmkrebs-Lila */
+  }
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: white;
+    padding: 40px 22px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 { margin:0; font-size:2rem; font-weight:700; }
+  p { margin-top:6px; color: var(--muted); }
+
+  .wrapper {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 16px;
+  }
+
+  .group-title {
+    font-weight: 600;
+    margin: 24px 0 12px;
+    font-size: 1.2rem;
+  }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .tile {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1 1 200px;
+    min-width: 200px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tile h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+  }
+
+  .status-badge {
+    font-weight: 600;
+    text-transform: capitalize;
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  .operational { color: var(--green); }
+  .degraded_performance { color: var(--yellow); }
+  .partial_outage { color: var(--orange); }
+  .major_outage { color: var(--red); }
+  .btfm { color: var(--purple); }
+</style>
 </head>
 <body>
+
 <header>
   <h1>Hustensaft Group Status</h1>
   <p id="global-status">Lade Status …</p>
 </header>
 
-<div class="wrapper">
-  <div class="card">
-    <div class="card-title">Systemstatus</div>
-    <div id="components-container">Lade Komponenten …</div>
-  </div>
+<div class="wrapper" id="status-wrapper">
+  <!-- Gruppen werden hier eingefügt -->
 </div>
 
 <script>
 const URL = "https://hustensaftmanagment.statuspage.io/api/v2/summary.json";
 
-// Gruppen-Logik
+// Gruppenerkennung
 function detectGroup(name) {
+  if (name.includes("Discord Hosting")) return "Discord Hosting";
   if (name.includes("API")) return "API's";
   if (name.startsWith("[BTFM Projects]")) return "BTFM Projects";
   return "Sonstige Systeme";
+}
+
+function createTile(comp) {
+  const div = document.createElement('div');
+  div.className = 'tile';
+  let statusClass = comp.status;
+  // Lila für BTFM Projects
+  if (comp.name.startsWith("[BTFM Projects]")) statusClass += " btfm";
+
+  div.innerHTML = `
+    <h3>${comp.name}</h3>
+    <div class="status-badge ${statusClass}">${comp.status.replace(/_/g," ")}</div>
+  `;
+  return div;
 }
 
 async function loadStatus() {
@@ -64,8 +126,8 @@ async function loadStatus() {
     document.getElementById("global-status").textContent = data.status.description || "Unbekannt";
 
     const components = data.components || [];
-    const container = document.getElementById("components-container");
-    container.innerHTML = "";
+    const wrapper = document.getElementById("status-wrapper");
+    wrapper.innerHTML = "";
 
     // Gruppen sammeln
     const groups = {};
@@ -75,29 +137,31 @@ async function loadStatus() {
       groups[group].push(c);
     });
 
-    // Render Gruppen
+    // Gruppen rendern
     for (const groupName in groups) {
       const title = document.createElement("div");
       title.className = "group-title";
       title.textContent = groupName;
-      container.appendChild(title);
+      wrapper.appendChild(title);
+
+      const grid = document.createElement("div");
+      grid.className = "grid";
 
       groups[groupName].forEach(comp => {
-        const el = document.createElement("div");
-        el.className = "component";
-        el.innerHTML = `<div>${comp.name}</div>
-                        <div class="status-badge ${comp.status}">${comp.status.replace(/_/g," ")}</div>`;
-        container.appendChild(el);
+        grid.appendChild(createTile(comp));
       });
+
+      wrapper.appendChild(grid);
     }
-  } catch (e) {
+
+  } catch(e) {
     document.getElementById("global-status").textContent = "Fehler beim Laden";
-    document.getElementById("components-container").textContent = "Keine Daten verfügbar";
   }
 }
 
 loadStatus();
-setInterval(loadStatus,60000);
+setInterval(loadStatus, 60000);
 </script>
+
 </body>
 </html>
