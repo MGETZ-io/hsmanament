@@ -7,22 +7,34 @@
   <style>
     body { font-family: system-ui, Arial, sans-serif; max-width:900px; margin:28px auto; padding:0 16px; color:#111; background:#fafafa; }
     header { display:flex; align-items:center; gap:12px; padding-bottom:10px; border-bottom:1px solid #ddd; }
+
     .indicator { width:18px; height:18px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle; }
     .indicator.none { background:#6c757d; }
     .indicator.minor { background:#f0ad4e; }
     .indicator.major { background:#fd7e14; }
     .indicator.critical { background:#dc3545; }
+
     h1 { margin:0; font-size:1.4rem; }
     h2 { margin-top:28px; }
-    .components, .incidents { margin-top:18px; }
-    .component { padding:12px; border:1px solid #eee; border-left-width:6px; margin-bottom:10px; border-radius:6px; background:white; }
+
+    /* Gruppen */
+    .group { margin-top:18px; border-radius:6px; border:1px solid #ddd; background:white; }
+    .group-title { padding:12px; background:#f2f2f2; font-weight:bold; border-bottom:1px solid #ddd; }
+
+    /* Komponenten */
+    .component { padding:12px; border-bottom:1px solid #eee; border-left-width:6px; border-left-style:solid; }
+    .component:last-child { border-bottom:0; }
+
     .component.operational { border-left-color: #28a745; }
     .component.degraded_performance { border-left-color: #ffc107; }
     .component.partial_outage { border-left-color: #fd7e14; }
     .component.major_outage { border-left-color: #dc3545; }
-    .incident { padding:12px; border-radius:6px; background:#fff3f3; border:1px solid #ffc9c9; margin-bottom:10px; }
+
     .muted { color:#666; font-size:0.9rem; }
     .updated { font-size:0.85rem; color:#666; margin-top:6px; }
+
+    /* Incidents */
+    .incident { padding:12px; border-radius:6px; background:#fff3f3; border:1px solid #ffc9c9; margin-bottom:10px; }
   </style>
 </head>
 <body>
@@ -35,8 +47,8 @@
   </header>
 
   <section class="components">
-    <h2>Komponenten</h2>
-    <div id="components-list">Lade Komponenten …</div>
+    <h2>Servergruppen</h2>
+    <div id="groups-list">Lade Gruppen …</div>
   </section>
 
   <section class="incidents">
@@ -56,51 +68,72 @@
     async function loadSummary() {
       try {
         const res = await fetch(`${BASE}/summary.json`);
-        if (!res.ok) throw new Error(res.status);
         const data = await res.json();
         render(data);
       } catch (e) {
-        document.getElementById('page-status').textContent = "Fehler beim Laden: " + e;
+        document.getElementById('page-status').textContent = "Fehler: " + e;
       }
     }
 
     function render(data) {
-      document.getElementById('page-name').textContent = data.page?.name || "Status";
-      document.getElementById('page-status').textContent =
-        (data.status?.description || "Unbekannt") +
-        (data.page?.updated_at ? " — " + isoToLocal(data.page.updated_at) : "");
+      document.getElementById('page-name').textContent = data.page.name;
+      document.getElementById('page-status').textContent = data.status.description;
 
-      const ind = document.getElementById('page-indicator');
-      ind.className = "indicator " + (data.status?.indicator || "none");
+      document.getElementById('page-indicator').className =
+        "indicator " + data.status.indicator;
 
-      const compList = document.getElementById('components-list');
-      compList.innerHTML = "";
-      if (!data.components.length) compList.textContent = "Keine Komponenten gefunden.";
-      data.components.forEach(c => {
-        const box = document.createElement('div');
-        box.className = "component " + c.status;
-        box.innerHTML = `
-          <strong>${c.name}</strong><br>
-          <div class="muted">${c.description || ""}</div>
-          <div>Status: ${c.status}</div>
-          <div class="updated">Zuletzt aktualisiert: ${isoToLocal(c.updated_at)}</div>
-        `;
-        compList.appendChild(box);
+      const groupsList = document.getElementById('groups-list');
+      groupsList.innerHTML = "";
+
+      // GRUPPEN ERSTELLEN
+      const groups = data.components.filter(c => c.group);
+
+      groups.forEach(group => {
+        const groupBox = document.createElement('div');
+        groupBox.className = "group";
+
+        const title = document.createElement('div');
+        title.className = "group-title";
+        title.textContent = group.name;
+
+        const inner = document.createElement('div');
+
+        // Komponenten in dieser Gruppe
+        group.components.forEach(id => {
+          const comp = data.components.find(c => c.id === id);
+          if (!comp) return;
+
+          const div = document.createElement('div');
+          div.className = "component " + comp.status;
+          div.innerHTML = `
+            <strong>${comp.name}</strong><br>
+            <div class="muted">${comp.description || ""}</div>
+            <div>Status: ${comp.status}</div>
+            <div class="updated">Zuletzt aktualisiert: ${isoToLocal(comp.updated_at)}</div>
+          `;
+          inner.appendChild(div);
+        });
+
+        groupBox.appendChild(title);
+        groupBox.appendChild(inner);
+        groupsList.appendChild(groupBox);
       });
 
+      // INCIDENTS
       const incList = document.getElementById('incidents-list');
       incList.innerHTML = "";
+
       if (!data.incidents.length) {
         incList.textContent = "Keine offenen Vorfälle.";
       } else {
         data.incidents.forEach(i => {
-          const last = i.incident_updates?.[i.incident_updates.length - 1];
+          const last = i.incident_updates.at(-1);
           const box = document.createElement('div');
           box.className = "incident";
           box.innerHTML = `
             <strong>${i.name} — ${i.impact} (${i.status})</strong>
             <div class="muted">Erstellt: ${isoToLocal(i.created_at)}</div>
-            ${last ? `<div>${last.body}</div><div class="updated">Letztes Update: ${isoToLocal(last.updated_at)} (${last.status})</div>` : ""}
+            ${last ? `<div>${last.body}</div><div class="updated">Letztes Update: ${isoToLocal(last.updated_at)}</div>` : ""}
           `;
           incList.appendChild(box);
         });
