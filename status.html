@@ -2,10 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hustensaft Group Status</title>
-
-  <!-- Hostvora-Design -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -91,6 +89,7 @@
     .degraded_performance { color: var(--yellow); }
     .partial_outage { color: var(--orange); }
     .major_outage { color: var(--red); }
+
     .incident {
       padding: 14px 0;
       border-bottom: 1px solid var(--border);
@@ -108,7 +107,6 @@
   </style>
 </head>
 <body>
-
 <header>
   <h1>Hustensaft Group Status</h1>
   <p id="global-status">Lade Status …</p>
@@ -117,29 +115,30 @@
 <div class="wrapper">
   <div class="card">
     <div class="card-title">Systemstatus / Komponenten</div>
-    <div id="components-container">Lade …</div>
+    <div id="components-container">Lade Komponenten …</div>
   </div>
 
   <div class="card">
     <div class="card-title">Vorfälle</div>
-    <div id="incidents-container">Lade …</div>
+    <div id="incidents-container">Lade Vorfälle …</div>
   </div>
 </div>
 
 <script>
-  // Deine Domain -> funktioniert IMMER ohne Änderungen
-  const BASE = "https://hustensaftmanagment.statuspage.io/api/v2/summary.json";
+  const SUMMARY_URL = "https://hustensaftmanagment.statuspage.io/api/v2/summary.json";
 
-  async function load() {
+  async function loadData() {
     try {
-      const res = await fetch(BASE);
+      const res = await fetch(SUMMARY_URL);
+      if (!res.ok) throw new Error("Fehler beim Laden");
       const data = await res.json();
-
       renderSummary(data);
       renderComponents(data);
-      renderIncidents(data.incidents || []);
+      renderIncidents(data);
     } catch (e) {
-      document.getElementById("global-status").textContent = "Fehler beim Laden.";
+      document.getElementById("global-status").textContent = "Fehler beim Laden";
+      document.getElementById("components-container").textContent = "Keine Daten";
+      document.getElementById("incidents-container").textContent = "Keine Daten";
     }
   }
 
@@ -152,70 +151,78 @@
     const container = document.getElementById("components-container");
     container.innerHTML = "";
 
-    const groups = data.component_groups || [];
     const components = data.components || [];
+    const groups = data.component_groups || [];
 
-    if (groups.length) {
+    // Wenn Gruppen definiert sind
+    if (groups.length > 0) {
       groups.forEach(group => {
-        const gDiv = document.createElement("div");
-        gDiv.className = "group";
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "group";
 
         const title = document.createElement("div");
         title.className = "group-title";
         title.textContent = group.name;
-        gDiv.appendChild(title);
+        groupDiv.appendChild(title);
 
-        group.components.forEach(id => {
-          const comp = components.find(c => c.id === id);
-          if (comp) gDiv.appendChild(makeCompElement(comp));
+        // Komponenten in dieser Gruppe
+        group.components.forEach(compId => {
+          const comp = components.find(c => c.id === compId);
+          if (comp) groupDiv.appendChild(createComponentElement(comp));
         });
 
-        container.appendChild(gDiv);
+        container.appendChild(groupDiv);
       });
 
       // Ungruppierte Komponenten
-      const ungrouped = components.filter(c => 
+      const ungroupedComps = components.filter(c =>
         !groups.some(g => g.components.includes(c.id))
       );
-
-      if (ungrouped.length) {
-        const gDiv = document.createElement("div");
-        gDiv.className = "group";
+      if (ungroupedComps.length > 0) {
+        const otherDiv = document.createElement("div");
+        otherDiv.className = "group";
         const t = document.createElement("div");
         t.className = "group-title";
-        t.textContent = "Andere Systeme";
-        gDiv.appendChild(t);
-        ungrouped.forEach(c => gDiv.appendChild(makeCompElement(c)));
-        container.appendChild(gDiv);
+        t.textContent = "Weitere Systeme";
+        otherDiv.appendChild(t);
+        ungroupedComps.forEach(c => {
+          otherDiv.appendChild(createComponentElement(c));
+        });
+        container.appendChild(otherDiv);
       }
+
     } else {
-      components.forEach(c => container.appendChild(makeCompElement(c)));
+      // keine Gruppen, zeige alle
+      components.forEach(c => {
+        container.appendChild(createComponentElement(c));
+      });
     }
   }
 
-  function makeCompElement(c) {
-    const el = document.createElement("div");
-    el.className = "component";
-    el.innerHTML = `
-      <div class="component-name">${c.name}</div>
-      <div class="status-badge ${c.status}">
-        ${c.status.replace(/_/g, " ")}
-      </div>
+  function createComponentElement(comp) {
+    const div = document.createElement("div");
+    div.className = "component";
+    div.innerHTML = `
+      <div class="component-name">${comp.name}</div>
+      <div class="status-badge ${comp.status}">${comp.status.replace(/_/g, " ")}</div>
     `;
-    return el;
+    return div;
   }
 
-  function renderIncidents(incs) {
+  function renderIncidents(data) {
     const container = document.getElementById("incidents-container");
     container.innerHTML = "";
 
-    if (!incs.length) {
-      container.textContent = "Keine Vorfälle.";
+    const incs = data.incidents || [];
+    if (incs.length === 0) {
+      container.textContent = "Keine aktuellen Vorfälle.";
       return;
     }
 
     incs.forEach(i => {
-      const last = i.incident_updates?.slice(-1)[0];
+      const last = i.incident_updates && i.incident_updates.length
+        ? i.incident_updates[i.incident_updates.length - 1]
+        : null;
 
       const el = document.createElement("div");
       el.className = "incident";
@@ -228,9 +235,8 @@
     });
   }
 
-  load();
-  setInterval(load, 60000);
+  loadData();
+  setInterval(loadData, 60000);
 </script>
-
 </body>
 </html>
