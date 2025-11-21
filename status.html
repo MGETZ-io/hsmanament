@@ -1,220 +1,195 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hustensaft Group — Status</title>
-  <style>
-    /* --- GLOBAL --- */
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hustensaft Group — Status</title>
+
+<style>
     :root {
-      --bg: #f8f9fa;
-      --header-bg: #1a1a1a;
-      --text: #111;
-      --muted: #6c757d;
-      --card-bg: #ffffff;
-      --success: #28a745;
-      --warning: #ffc107;
-      --alert: #fd7e14;
-      --critical: #dc3545;
-      --accent: #7c5cff;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --muted: #64748b;
+
+        --green: #22c55e;
+        --yellow: #facc15;
+        --orange: #fb923c;
+        --red: #ef4444;
     }
 
-    * { box-sizing: border-box; }
-
     body {
-      margin: 0;
-      font-family: "Inter", system-ui, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+        font-family: "Inter", system-ui, Arial, sans-serif;
+        background: var(--bg);
+        margin: 0;
+        color: var(--text);
     }
 
     header {
-      background: var(--header-bg);
-      color: white;
-      padding: 20px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid rgba(255,255,255,0.1);
+        padding: 36px 28px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        background: white;
     }
 
-    header h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
-
-    main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-
-    h2 { margin-top: 40px; margin-bottom: 20px; font-weight: 600; }
-
-    /* --- INDICATORS --- */
-    .indicator {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 10px;
-      vertical-align: middle;
+    header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
     }
-    .indicator.none { background:#6c757d; }
-    .indicator.minor { background:#ffc107; }
-    .indicator.major { background:#fd7e14; }
-    .indicator.critical { background:#dc3545; }
-    .indicator.operational { background: #28a745; }
 
-    /* --- GROUPS --- */
-    .group {
-      background: var(--card-bg);
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      overflow: hidden;
-      border: 1px solid #e3e3e3;
+    header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
     }
-    .group-title {
-      padding: 15px 20px;
-      font-weight: 600;
-      background: #f1f1f1;
-      cursor: pointer;
-      transition: background 0.2s;
+
+    .wrapper {
+        max-width: 860px;
+        margin: 34px auto;
+        padding: 0 18px;
     }
-    .group-title:hover { background: #e2e2e2; }
 
-    .group-content { padding: 15px 20px; }
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 22px;
+    }
 
-    /* --- COMPONENTS --- */
+    .comp-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
     .component {
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      border-left: 6px solid;
-      border-radius: 6px;
-      background: #fafafa;
-      transition: transform 0.2s;
+        display: flex;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
     }
-    .component:hover { transform: translateY(-2px); }
 
-    .component.operational { border-left-color: var(--success); }
-    .component.degraded_performance { border-left-color: var(--warning); }
-    .component.partial_outage { border-left-color: var(--alert); }
-    .component.major_outage { border-left-color: var(--critical); }
+    .component:last-child {
+        border-bottom: none;
+    }
 
-    .component strong { font-weight: 600; }
-    .muted { color: var(--muted); font-size: 0.9rem; }
-    .updated { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: white;
+        text-transform: capitalize;
+    }
 
-    /* --- INCIDENTS --- */
+    .operational { background: var(--green); }
+    .degraded_performance { background: var(--yellow); }
+    .partial_outage { background: var(--orange); }
+    .major_outage { background: var(--red); }
+
     .incident {
-      padding: 15px 20px;
-      border-radius: 8px;
-      background: #fff3f3;
-      border: 1px solid #ffc9c9;
-      margin-bottom: 15px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
     }
+    .incident:last-child { border-bottom:none; }
 
-    /* --- COLLAPSIBLE --- */
-    .collapsed .group-content { display: none; }
-  </style>
+    .incident-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    .incident-time {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+</style>
 </head>
 <body>
-  <header>
+
+<header>
     <h1>Hustensaft Group Status</h1>
-    <div id="page-indicator" class="indicator none"></div>
-  </header>
+    <p id="global-status">Lade Status…</p>
+</header>
 
-  <main>
-    <section class="components">
-      <h2>Servergruppen</h2>
-      <div id="groups-list">Lade Gruppen …</div>
-    </section>
+<div class="wrapper">
 
-    <section class="incidents">
-      <h2>Offene Vorfälle</h2>
-      <div id="incidents-list">Lade Vorfälle …</div>
-    </section>
-  </main>
+    <div class="card">
+        <div class="comp-title">Systemstatus</div>
+        <div id="components-list">Wird geladen…</div>
+    </div>
 
-  <script>
-    const PAGE = '36j0fv3xt22c';
-    const BASE = `https://${PAGE}.statuspage.io/api/v2`;
+    <div class="card">
+        <div class="comp-title">Vorfälle</div>
+        <div id="incidents-list">Wird geladen…</div>
+    </div>
 
-    function isoToLocal(iso) {
-      if (!iso) return '';
-      try { return new Date(iso).toLocaleString('de-DE'); } catch(e){ return iso; }
+</div>
+
+<script>
+const PAGE = "36j0fv3xt22c";
+const API = `https://${PAGE}.statuspage.io/api/v2`;
+
+function isoToLocal(iso){
+    if(!iso) return "";
+    return new Date(iso).toLocaleString("de-DE");
+}
+
+async function loadStatus(){
+    const res = await fetch(`${API}/summary.json`);
+    const data = await res.json();
+    render(data);
+}
+
+function render(data){
+    // === Global Header Status ===
+    const status = data.status?.description || "Unbekannt";
+    document.getElementById("global-status").textContent = status;
+
+    // === Komponenten ===
+    const compList = document.getElementById("components-list");
+    compList.innerHTML = "";
+
+    data.components.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "component";
+        row.innerHTML = `
+            <div>${c.name}</div>
+            <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
+        `;
+        compList.appendChild(row);
+    });
+
+    // === Vorfälle ===
+    const incList = document.getElementById("incidents-list");
+    incList.innerHTML = "";
+
+    if(data.incidents.length === 0){
+        incList.textContent = "Keine aktuellen Vorfälle.";
+        return;
     }
 
-    async function loadSummary() {
-      try {
-        const res = await fetch(`${BASE}/summary.json`);
-        const data = await res.json();
-        render(data);
-      } catch (e) {
-        document.getElementById('groups-list').textContent = "Fehler beim Laden: " + e;
-      }
-    }
+    data.incidents.forEach(i => {
+        const last = i.incident_updates?.[i.incident_updates.length - 1];
+        const box = document.createElement("div");
+        box.className = "incident";
 
-    function render(data) {
-      // PAGE HEADER
-      document.getElementById('page-indicator').className =
-        "indicator " + (data.status.indicator || "none");
+        box.innerHTML = `
+            <div class="incident-title">${i.name} (${i.impact})</div>
+            <div class="incident-time">${isoToLocal(i.created_at)}</div>
+            <div>${last?.body || ""}</div>
+        `;
 
-      // GROUPS
-      const groupsList = document.getElementById('groups-list');
-      groupsList.innerHTML = "";
+        incList.appendChild(box);
+    });
+}
 
-      // Sortiere nach Gruppenname
-      const groups = data.components.filter(c => c.group).sort((a,b) => a.name.localeCompare(b.name));
+loadStatus();
+setInterval(loadStatus, 60000);
+</script>
 
-      groups.forEach(group => {
-        const groupBox = document.createElement('div');
-        groupBox.className = "group";
-
-        const title = document.createElement('div');
-        title.className = "group-title";
-        title.textContent = group.name;
-        title.onclick = () => groupBox.classList.toggle('collapsed');
-
-        const inner = document.createElement('div');
-        inner.className = "group-content";
-
-        group.components.forEach(id => {
-          const comp = data.components.find(c => c.id === id);
-          if (!comp) return;
-
-          const div = document.createElement('div');
-          div.className = "component " + comp.status;
-          div.innerHTML = `
-            <strong>${comp.name}</strong><br>
-            <div class="muted">${comp.description || ""}</div>
-            <div>Status: ${comp.status}</div>
-            <div class="updated">Zuletzt aktualisiert: ${isoToLocal(comp.updated_at)}</div>
-          `;
-          inner.appendChild(div);
-        });
-
-        groupBox.appendChild(title);
-        groupBox.appendChild(inner);
-        groupsList.appendChild(groupBox);
-      });
-
-      // INCIDENTS
-      const incList = document.getElementById('incidents-list');
-      incList.innerHTML = "";
-      if (!data.incidents.length) {
-        incList.textContent = "Keine offenen Vorfälle.";
-      } else {
-        data.incidents.forEach(i => {
-          const last = i.incident_updates.at(-1);
-          const box = document.createElement('div');
-          box.className = "incident";
-          box.innerHTML = `
-            <strong>${i.name} — ${i.impact} (${i.status})</strong>
-            <div class="muted">Erstellt: ${isoToLocal(i.created_at)}</div>
-            ${last ? `<div>${last.body}</div><div class="updated">Letztes Update: ${isoToLocal(last.updated_at)}</div>` : ""}
-          `;
-          incList.appendChild(box);
-        });
-      }
-    }
-
-    loadSummary();
-    setInterval(loadSummary, 60000);
-  </script>
 </body>
 </html>
