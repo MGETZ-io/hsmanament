@@ -1,249 +1,162 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hustensaft Group Status</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hustensaft Group Status</title>
 
-<style>
-/* ---------- Hostvora-Style ---------- */
-:root {
-    --bg: #f9fafb;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #111827;
-    --muted: #6b7280;
+    <!-- Google Font wie hostvora -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    --green: #22c55e;
-    --yellow: #facc15;
-    --orange: #fb923c;
-    --red: #ef4444;
-}
+    <style>
+        body {
+            margin: 0;
+            background: #f7f8fa;
+            font-family: "Inter", sans-serif;
+            color: #111;
+        }
 
-body {
-    margin: 0;
-    font-family: Inter, system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-}
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 40px;
+            font-size: 22px;
+            font-weight: 600;
+        }
 
-/* Header */
-header {
-    background: white;
-    padding: 40px 22px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-}
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-}
-header p {
-    margin: 6px 0 0;
-    font-size: 1rem;
-    color: var(--muted);
-}
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
 
-/* Wrapper */
-.wrapper {
-    max-width: 860px;
-    margin: 36px auto;
-    padding: 0 18px;
-}
+        .status-box {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
 
-/* Cards */
-.card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 26px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-}
+        .group-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #111;
+        }
 
-.card-title {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 14px;
-}
+        .component {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
 
-/* Komponenten */
-.component {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.component:last-child {
-    border-bottom: none;
-}
+        .component:last-child {
+            border-bottom: none;
+        }
 
-/* Gruppen */
-.group {
-    margin-bottom: 16px;
-}
-.group .group-title {
-    font-weight: 600;
-    margin-bottom: 10px;
-    font-size: 1.05rem;
-}
+        .component-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
 
-/* Status-Badges */
-.status-badge {
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: white;
-    text-transform: capitalize;
-}
-.operational { background: var(--green); }
-.degraded_performance { background: var(--yellow); }
-.partial_outage { background: var(--orange); }
-.major_outage { background: var(--red); }
+        .status {
+            font-size: 15px;
+            font-weight: 600;
+        }
 
-/* Vorfälle */
-.incident {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-}
-.incident:last-child { border-bottom: none; }
-
-.incident-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-.incident-time {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 6px;
-}
-</style>
+        .operational { color: #16a34a; }
+        .major_outage { color: #dc2626; }
+        .partial_outage { color: #d97706; }
+        .degraded_performance { color: #eab308; }
+        .under_maintenance { color: #3b82f6; }
+    </style>
 </head>
 <body>
 
-<header>
-    <h1>Hustensaft Group Status</h1>
-    <p id="global-status">Lade Status…</p>
-</header>
+<header>Hustensaft Group – Status</header>
 
-<div class="wrapper">
-
-    <!-- Systemstatus -->
-    <div class="card">
-        <div class="card-title">Systemstatus</div>
-        <div id="components-groups">Wird geladen…</div>
-    </div>
-
-    <!-- Vorfälle -->
-    <div class="card">
-        <div class="card-title">Vorfälle</div>
-        <div id="incidents-list">Wird geladen…</div>
-    </div>
-
+<div class="container">
+    <div id="components"></div>
 </div>
 
 <script>
-const PAGE = "36j0fv3xt22c";
-const API = `https://${PAGE}.statuspage.io/api/v2`;
+const API_BASE = "https://hustensaftmanagment.statuspage.io/api";
 
-function isoToLocal(iso) {
-    if (!iso) return "";
-    return new Date(iso).toLocaleString("de-DE");
+async function fetchAPI(endpoint) {
+    const res = await fetch(`${API_BASE}/${endpoint}`);
+    return res.json();
 }
 
 async function loadStatus() {
-    const res = await fetch(`${API}/summary.json`);
-    const data = await res.json();
-    render(data);
-}
 
-function render(data) {
+    // Schritt 1: Gruppen & Komponenten laden
+    const groups = await fetchAPI("component-groups");
+    const components = await fetchAPI("components");
 
-    /* GLOBAL STATUS */
-    document.getElementById("global-status").textContent =
-        data.status?.description || "Unbekannt";
-
-    /* GRUPPEN + KOMPONENTEN */
-    const container = document.getElementById("components-groups");
+    const container = document.getElementById("components");
     container.innerHTML = "";
 
-    // Groups first
-    const groups = data.component_groups;
-    const components = data.components;
-
+    // Schritt 2: Gruppen durchgehen
     groups.forEach(group => {
-        const g = document.createElement("div");
-        g.className = "group";
+        const groupBox = document.createElement("div");
+        groupBox.className = "status-box";
 
-        g.innerHTML = `<div class="group-title">${group.name}</div>`;
+        const title = document.createElement("div");
+        title.className = "group-title";
+        title.textContent = group.name;
+        groupBox.appendChild(title);
 
-        // Filter components inside this group
-        const groupComponents = components.filter(c => c.group_id === group.id);
+        // Komponenten der Gruppe
+        group.components.forEach(id => {
+            const comp = components.find(c => c.id === id);
+            if (!comp) return;
 
-        groupComponents.forEach(c => {
-            const row = document.createElement("div");
-            row.className = "component";
-            row.innerHTML = `
-                <div>${c.name}</div>
-                <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
+            const compDiv = document.createElement("div");
+            compDiv.className = "component";
+
+            compDiv.innerHTML = `
+                <div class="component-name">${comp.name}</div>
+                <div class="status ${comp.status}">${comp.status.replace("_", " ")}</div>
             `;
-            g.appendChild(row);
+
+            groupBox.appendChild(compDiv);
         });
 
-        container.appendChild(g);
+        container.appendChild(groupBox);
     });
 
-    // Components without group
-    const ungrouped = components.filter(c => !c.group_id);
-    if (ungrouped.length > 0) {
-        const g = document.createElement("div");
-        g.className = "group";
-        g.innerHTML = `<div class="group-title">Weitere Systeme</div>`;
+    // Schritt 3: Komponenten ohne Gruppe (falls vorhanden)
+    const orphans = components.filter(c => !groups.some(g => g.components.includes(c.id)));
 
-        ungrouped.forEach(c => {
-            const row = document.createElement("div");
-            row.className = "component";
-            row.innerHTML = `
-                <div>${c.name}</div>
-                <div class="status-badge ${c.status}">${c.status.replace("_"," ")}</div>
-            `;
-            g.appendChild(row);
-        });
-
-        container.appendChild(g);
-    }
-
-    /* INCIDENTS */
-    const incList = document.getElementById("incidents-list");
-    incList.innerHTML = "";
-
-    if (data.incidents.length === 0) {
-        incList.textContent = "Keine aktuellen Vorfälle.";
-        return;
-    }
-
-    data.incidents.forEach(i => {
-        const last = i.incident_updates?.[i.incident_updates.length - 1];
-
+    if (orphans.length > 0) {
         const box = document.createElement("div");
-        box.className = "incident";
+        box.className = "status-box";
 
-        box.innerHTML = `
-            <div class="incident-title">${i.name} (${i.impact})</div>
-            <div class="incident-time">${isoToLocal(i.created_at)}</div>
-            <div>${last?.body || ""}</div>
-        `;
+        const title = document.createElement("div");
+        title.className = "group-title";
+        title.textContent = "Andere Systeme";
+        box.appendChild(title);
 
-        incList.appendChild(box);
-    });
+        orphans.forEach(comp => {
+            const compDiv = document.createElement("div");
+            compDiv.className = "component";
+
+            compDiv.innerHTML = `
+                <div class="component-name">${comp.name}</div>
+                <div class="status ${comp.status}">${comp.status.replace("_", " ")}</div>
+            `;
+
+            box.appendChild(compDiv);
+        });
+
+        container.appendChild(box);
+    }
 }
 
 loadStatus();
-setInterval(loadStatus, 60000);
+setInterval(loadStatus, 15000);
 </script>
 
 </body>
