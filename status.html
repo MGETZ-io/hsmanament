@@ -1,162 +1,235 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hustensaft Group Status</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hustensaft Group Status</title>
 
-    <!-- Google Font wie hostvora -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Hostvora-Design -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
 
-    <style>
-        body {
-            margin: 0;
-            background: #f7f8fa;
-            font-family: "Inter", sans-serif;
-            color: #111;
-        }
-
-        header {
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 20px 40px;
-            font-size: 22px;
-            font-weight: 600;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .status-box {
-            background: white;
-            border: 1px solid #e5e7eb;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .group-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #111;
-        }
-
-        .component {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .component:last-child {
-            border-bottom: none;
-        }
-
-        .component-name {
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .status {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .operational { color: #16a34a; }
-        .major_outage { color: #dc2626; }
-        .partial_outage { color: #d97706; }
-        .degraded_performance { color: #eab308; }
-        .under_maintenance { color: #3b82f6; }
-    </style>
+      --green: #22c55e;
+      --yellow: #facc15;
+      --orange: #fb923c;
+      --red: #ef4444;
+    }
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: white;
+      padding: 40px 22px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    header p {
+      margin: 6px 0 0;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    .wrapper {
+      max-width: 860px;
+      margin: 36px auto;
+      padding: 0 18px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 26px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .group {
+      margin-bottom: 16px;
+    }
+    .group-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+    }
+    .component {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .component:last-child {
+      border-bottom: none;
+    }
+    .component-name {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .status-badge {
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .operational { color: var(--green); }
+    .degraded_performance { color: var(--yellow); }
+    .partial_outage { color: var(--orange); }
+    .major_outage { color: var(--red); }
+    .incident {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .incident:last-child { border-bottom: none; }
+    .incident-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .incident-time {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
 
-<header>Hustensaft Group – Status</header>
+<header>
+  <h1>Hustensaft Group Status</h1>
+  <p id="global-status">Lade Status …</p>
+</header>
 
-<div class="container">
-    <div id="components"></div>
+<div class="wrapper">
+  <div class="card">
+    <div class="card-title">Systemstatus / Komponenten</div>
+    <div id="components-container">Lade …</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Vorfälle</div>
+    <div id="incidents-container">Lade …</div>
+  </div>
 </div>
 
 <script>
-const API_BASE = "https://hustensaftmanagment.statuspage.io/api";
+  // Deine Domain -> funktioniert IMMER ohne Änderungen
+  const BASE = "https://hustensaftmanagment.statuspage.io/api/v2/summary.json";
 
-async function fetchAPI(endpoint) {
-    const res = await fetch(`${API_BASE}/${endpoint}`);
-    return res.json();
-}
+  async function load() {
+    try {
+      const res = await fetch(BASE);
+      const data = await res.json();
 
-async function loadStatus() {
+      renderSummary(data);
+      renderComponents(data);
+      renderIncidents(data.incidents || []);
+    } catch (e) {
+      document.getElementById("global-status").textContent = "Fehler beim Laden.";
+    }
+  }
 
-    // Schritt 1: Gruppen & Komponenten laden
-    const groups = await fetchAPI("component-groups");
-    const components = await fetchAPI("components");
+  function renderSummary(data) {
+    document.getElementById("global-status").textContent =
+      data.status?.description || "Unbekannt";
+  }
 
-    const container = document.getElementById("components");
+  function renderComponents(data) {
+    const container = document.getElementById("components-container");
     container.innerHTML = "";
 
-    // Schritt 2: Gruppen durchgehen
-    groups.forEach(group => {
-        const groupBox = document.createElement("div");
-        groupBox.className = "status-box";
+    const groups = data.component_groups || [];
+    const components = data.components || [];
+
+    if (groups.length) {
+      groups.forEach(group => {
+        const gDiv = document.createElement("div");
+        gDiv.className = "group";
 
         const title = document.createElement("div");
         title.className = "group-title";
         title.textContent = group.name;
-        groupBox.appendChild(title);
+        gDiv.appendChild(title);
 
-        // Komponenten der Gruppe
         group.components.forEach(id => {
-            const comp = components.find(c => c.id === id);
-            if (!comp) return;
-
-            const compDiv = document.createElement("div");
-            compDiv.className = "component";
-
-            compDiv.innerHTML = `
-                <div class="component-name">${comp.name}</div>
-                <div class="status ${comp.status}">${comp.status.replace("_", " ")}</div>
-            `;
-
-            groupBox.appendChild(compDiv);
+          const comp = components.find(c => c.id === id);
+          if (comp) gDiv.appendChild(makeCompElement(comp));
         });
 
-        container.appendChild(groupBox);
-    });
+        container.appendChild(gDiv);
+      });
 
-    // Schritt 3: Komponenten ohne Gruppe (falls vorhanden)
-    const orphans = components.filter(c => !groups.some(g => g.components.includes(c.id)));
+      // Ungruppierte Komponenten
+      const ungrouped = components.filter(c => 
+        !groups.some(g => g.components.includes(c.id))
+      );
 
-    if (orphans.length > 0) {
-        const box = document.createElement("div");
-        box.className = "status-box";
-
-        const title = document.createElement("div");
-        title.className = "group-title";
-        title.textContent = "Andere Systeme";
-        box.appendChild(title);
-
-        orphans.forEach(comp => {
-            const compDiv = document.createElement("div");
-            compDiv.className = "component";
-
-            compDiv.innerHTML = `
-                <div class="component-name">${comp.name}</div>
-                <div class="status ${comp.status}">${comp.status.replace("_", " ")}</div>
-            `;
-
-            box.appendChild(compDiv);
-        });
-
-        container.appendChild(box);
+      if (ungrouped.length) {
+        const gDiv = document.createElement("div");
+        gDiv.className = "group";
+        const t = document.createElement("div");
+        t.className = "group-title";
+        t.textContent = "Andere Systeme";
+        gDiv.appendChild(t);
+        ungrouped.forEach(c => gDiv.appendChild(makeCompElement(c)));
+        container.appendChild(gDiv);
+      }
+    } else {
+      components.forEach(c => container.appendChild(makeCompElement(c)));
     }
-}
+  }
 
-loadStatus();
-setInterval(loadStatus, 15000);
+  function makeCompElement(c) {
+    const el = document.createElement("div");
+    el.className = "component";
+    el.innerHTML = `
+      <div class="component-name">${c.name}</div>
+      <div class="status-badge ${c.status}">
+        ${c.status.replace(/_/g, " ")}
+      </div>
+    `;
+    return el;
+  }
+
+  function renderIncidents(incs) {
+    const container = document.getElementById("incidents-container");
+    container.innerHTML = "";
+
+    if (!incs.length) {
+      container.textContent = "Keine Vorfälle.";
+      return;
+    }
+
+    incs.forEach(i => {
+      const last = i.incident_updates?.slice(-1)[0];
+
+      const el = document.createElement("div");
+      el.className = "incident";
+      el.innerHTML = `
+        <div class="incident-title">${i.name} (${i.impact})</div>
+        <div class="incident-time">${new Date(i.created_at).toLocaleString("de-DE")}</div>
+        <div>${last?.body || ""}</div>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  load();
+  setInterval(load, 60000);
 </script>
 
 </body>
