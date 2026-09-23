@@ -1,176 +1,777 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maxims Startseite - Futuristisch</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    color: #0ff;
-    font-family: 'Orbitron', monospace, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
+  <title>Maxims Startseite</title>
 
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 15px #0ff;
-  }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  .links {
-    display: flex;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
 
-  .link {
-    background: rgba(0, 255, 255, 0.1);
-    border: 2px solid #0ff;
-    padding: 1.2rem 2rem;
-    border-radius: 15px;
-    text-decoration: none;
-    color: #0ff;
-    font-size: 1.3rem;
-    letter-spacing: 0.1rem;
-    box-shadow: 0 0 15px #0ff88;
-    transition: all 0.3s ease;
-    position: relative;
-  }
-  .link::after {
-    content: '↗';
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.6;
-    font-weight: bold;
-  }
-  .link:hover {
-    background: #0ff;
-    color: #020202;
-    box-shadow: 0 0 25px #0ff;
-    transform: scale(1.1);
-  }
+  <style>
+    :root {
+      --md-primary: #a8c7fa;
+      --md-on-primary: #062e6f;
 
-  footer {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 200px;
-    height: 70px;
-    overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid #0ff;
-    box-shadow: 0 0 15px #0ff66;
-    background: rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
+      --md-secondary: #c2c7d0;
+      --md-on-secondary: #2c3038;
 
-  .logo-slider {
-    display: flex;
-    height: 70px;
-    transition: transform 0.6s ease-in-out;
-  }
+      --md-background: #101114;
+      --md-surface: #101114;
 
-  .logo-slider img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    margin-right: 15px;
-    filter: drop-shadow(0 0 5px #0ff);
-  }
+      --md-surface-container-low: #191a1f;
+      --md-surface-container: #1d1e23;
+      --md-surface-container-high: #282a30;
+      --md-surface-container-highest: #33353b;
 
-  /* Seitenmenü */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 70px;
-    height: 100vh;
-    background: rgba(0, 255, 255, 0.1);
-    border-right: 2px solid #0ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 1rem;
-    box-shadow: 0 0 15px #0ff88;
-    z-index: 1000;
-  }
+      --md-on-surface: #e3e2e6;
+      --md-on-surface-variant: #c4c6d0;
 
-  .sidebar-button {
-    width: 50px;
-    height: 50px;
-    margin: 1rem 0;
-    background: rgba(0, 255, 255, 0.2);
-    border: 1px solid #0ff;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+      --md-outline: #8e9099;
+      --md-outline-variant: #44474f;
 
-  .sidebar-button img {
-    width: 30px;
-    height: 30px;
-    filter: drop-shadow(0 0 5px #0ff);
-  }
+      --radius-large: 28px;
+      --radius-medium: 20px;
+      --radius-small: 12px;
+    }
 
-  .sidebar-button:hover {
-    background: #0ff;
-    transform: scale(1.15);
-  }
-</style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      background:
+        radial-gradient(
+          circle at 50% -20%,
+          rgba(168, 199, 250, 0.10),
+          transparent 40%
+        ),
+        var(--md-background);
+
+      color: var(--md-on-surface);
+
+      font-family:
+        "Google Sans",
+        "Google Sans Text",
+        Arial,
+        sans-serif;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================
+       TOP APP BAR
+       ========================= */
+
+    .top-app-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+
+      height: 72px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 28px;
+
+      background: rgba(16, 17, 20, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid rgba(68, 71, 79, 0.35);
+
+      z-index: 1000;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .app-icon {
+      width: 40px;
+      height: 40px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       MAIN
+       ========================= */
+
+    main {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+
+      padding-top: 140px;
+      padding-bottom: 100px;
+    }
+
+    .hero {
+      margin-bottom: 48px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+
+      padding: 8px 14px;
+
+      border-radius: 999px;
+
+      background: var(--md-surface-container-high);
+      color: var(--md-primary);
+
+      font-size: 13px;
+      font-weight: 600;
+
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 1.02;
+
+      letter-spacing: -2.5px;
+      font-weight: 600;
+    }
+
+    .hero p {
+      max-width: 650px;
+
+      margin-top: 20px;
+
+      color: var(--md-on-surface-variant);
+
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    /* =========================
+       LINKS GRID
+       ========================= */
+
+    .section-title {
+      margin: 0 0 18px;
+
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .links {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+
+      gap: 16px;
+    }
+
+    .link {
+      position: relative;
+
+      min-height: 145px;
+
+      padding: 24px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      text-decoration: none;
+
+      color: var(--md-on-surface);
+
+      background: var(--md-surface-container);
+
+      border: 1px solid transparent;
+      border-radius: var(--radius-large);
+
+      transition:
+        background 180ms ease,
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .link:hover {
+      background: var(--md-surface-container-high);
+      border-color: var(--md-outline-variant);
+
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .link:active {
+      transform: scale(0.98);
+    }
+
+    .link-icon {
+      width: 44px;
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
+      background: var(--md-surface-container-highest);
+      color: var(--md-primary);
+
+      font-size: 20px;
+    }
+
+    .link-content {
+      margin-top: 18px;
+    }
+
+    .link-title {
+      display: block;
+
+      font-size: 17px;
+      font-weight: 600;
+
+      margin-bottom: 5px;
+    }
+
+    .link-description {
+      display: block;
+
+      color: var(--md-on-surface-variant);
+
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .arrow {
+      position: absolute;
+
+      right: 20px;
+      top: 20px;
+
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      color: var(--md-on-surface-variant);
+
+      font-size: 18px;
+
+      transition:
+        background 180ms ease,
+        color 180ms ease;
+    }
+
+    .link:hover .arrow {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    footer {
+      width: min(1100px, calc(100% - 40px));
+
+      margin: auto auto 28px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 18px 22px;
+
+      background: var(--md-surface-container-low);
+
+      border: 1px solid var(--md-outline-variant);
+
+      border-radius: var(--radius-medium);
+
+      color: var(--md-on-surface-variant);
+
+      font-size: 13px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+
+      border-radius: 50%;
+
+      background: #81c995;
+
+      box-shadow:
+        0 0 0 4px rgba(129, 201, 149, 0.10);
+    }
+
+    .logo-slider {
+      display: flex;
+      align-items: center;
+
+      width: 170px;
+      height: 40px;
+
+      overflow: hidden;
+    }
+
+    .logo-slider-track {
+      display: flex;
+      align-items: center;
+
+      transition: transform 500ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .logo-slider img {
+      width: 40px;
+      height: 40px;
+
+      object-fit: contain;
+
+      margin-right: 20px;
+
+      filter: grayscale(100%);
+      opacity: 0.75;
+
+      transition:
+        opacity 200ms ease,
+        filter 200ms ease;
+    }
+
+    .logo-slider img:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 650px) {
+
+      .top-app-bar {
+        height: 64px;
+        padding: 0 18px;
+      }
+
+      .app-title {
+        font-size: 18px;
+      }
+
+      .app-icon {
+        width: 36px;
+        height: 36px;
+      }
+
+      main {
+        width: min(100% - 28px, 1100px);
+        padding-top: 110px;
+      }
+
+      h1 {
+        letter-spacing: -1.5px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .links {
+        grid-template-columns: 1fr;
+      }
+
+      .link {
+        min-height: 130px;
+      }
+
+      footer {
+        width: calc(100% - 28px);
+
+        flex-direction: column;
+        gap: 14px;
+
+        text-align: center;
+      }
+    }
+
+    /* =========================
+       REDUCED MOTION
+       ========================= */
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
+  <!-- =========================
+       TOP APP BAR
+       ========================= -->
 
-<h1>Willkommen, Maxim</h1>
+  <header class="top-app-bar">
 
-<div class="links">
-  <a class="link" href="https://bigtimefm.de" target="_blank" rel="noopener noreferrer">BigTimeFM</a>
-  <a class="link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-  <a class="link" href="https://google.de" target="_blank" rel="noopener noreferrer">Google</a>
-  <a class="link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
-  <a class="link" href="https://steinschule.neumuenster.de" target="_blank" rel="noopener noreferrer">SteinSchule</a>
-  <a class="link" href="https://backend.bigtimefm.de" target="_blank" rel="noopener noreferrer">BigTimeFM Backend</a>
-  <a class="link" href="https://panel.hustensaft.org" target="_blank" rel="noopener noreferrer">Hustensaft LABS</a>
-  <a class="link" href="https://billing.hustensaft.org" target="_blank" rel="noopener noreferrer">Hustensaft LABS Billing</a>
-</div>
+    <div class="app-title">
 
-<footer>
-  <div class="logo-slider" id="logoSlider">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Aldi_Nord_Logo_2021.svg/512px-Aldi_Nord_Logo_2021.svg.png" alt="Aldi Gaming" title="Aldi Gaming" />
-    <img src="https://bigtimefm.de/wp-content/uploads/2024/01/cropped-bigtime-logo-512.png" alt="BigTimeFM" title="BigTimeFM" />
-    <img src="https://iserv.eu/fileadmin/user_upload/Logos/IServ-Logo-2022.png" alt="IServ" title="IServ" />
-  </div>
-</footer>
+      <div class="app-icon">
+        M
+      </div>
 
-<script>
-  const slider = document.getElementById('logoSlider');
-  const logosCount = slider.children.length;
-  let currentIndex = 0;
+      <span>Maxims Startseite</span>
 
-  function slideLogos() {
-    currentIndex = (currentIndex + 1) % logosCount;
-    slider.style.transform = `translateX(-${currentIndex * 85}px)`;
-  }
+    </div>
 
-  setInterval(slideLogos, 3000);
-</script>
+  </header>
+
+
+  <!-- =========================
+       MAIN
+       ========================= -->
+
+  <main>
+
+    <section class="hero">
+
+      <span class="eyebrow">
+        Persönliches Dashboard
+      </span>
+
+      <h1>
+        Willkommen, Maxim.
+      </h1>
+
+      <p>
+        Deine wichtigsten Websites, Projekte und Dienste
+        an einem zentralen Ort.
+      </p>
+
+    </section>
+
+
+    <section>
+
+      <h2 class="section-title">
+        Schnellzugriff
+      </h2>
+
+
+      <div class="links">
+
+        <a
+          class="link"
+          href="https://bigtimefm.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">♫</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              BigTimeFM
+            </span>
+
+            <span class="link-description">
+              Radio, Streams und aktuelle Informationen
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://youtube.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">▶</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              YouTube
+            </span>
+
+            <span class="link-description">
+              Videos und Creator-Inhalte
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://google.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">G</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              Google
+            </span>
+
+            <span class="link-description">
+              Suche und Google-Dienste
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://chatgpt.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">✦</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              ChatGPT
+            </span>
+
+            <span class="link-description">
+              KI-Assistent für Arbeit und Projekte
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://steinschule.neumuenster.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">⌂</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              SteinSchule
+            </span>
+
+            <span class="link-description">
+              Schulportal der Freiherr-vom-Stein-Schule
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://backend.bigtimefm.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">⚙</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              BigTimeFM Backend
+            </span>
+
+            <span class="link-description">
+              Verwaltung und technische Systeme
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+
+        <a
+          class="link"
+          href="https://panel.hustensaft.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">▣</div>
+
+          <div class="link-content">
+
+            <span class="link-title">
+              Hustensaft LABS
+            </span>
+
+            <span class="link-description">
+              Server, Hosting und Infrastruktur
+            </span>
+
+          </div>
+
+          <span class="arrow">↗</span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+       ========================= -->
+
+  <footer>
+
+    <div class="footer-left">
+
+      <span class="status-dot"></span>
+
+      <span>
+        System online · Maxim © 2026
+      </span>
+
+    </div>
+
+
+    <div class="logo-slider">
+
+      <div
+        class="logo-slider-track"
+        id="logoSlider"
+      >
+
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Aldi_Nord_Logo_2021.svg/512px-Aldi_Nord_Logo_2021.svg.png"
+          alt="Aldi"
+          title="Aldi"
+        >
+
+        <img
+          src="https://bigtimefm.de/wp-content/uploads/2024/01/cropped-bigtime-logo-512.png"
+          alt="BigTimeFM"
+          title="BigTimeFM"
+        >
+
+        <img
+          src="https://iserv.eu/fileadmin/user_upload/Logos/IServ-Logo-2022.png"
+          alt="IServ"
+          title="IServ"
+        >
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       JAVASCRIPT
+       ========================= -->
+
+  <script>
+
+    const slider = document.getElementById("logoSlider");
+
+    const logos = slider.children.length;
+
+    let currentIndex = 0;
+
+    function slideLogos() {
+
+      currentIndex =
+        (currentIndex + 1) % logos;
+
+      slider.style.transform =
+        `translateX(-${currentIndex * 60}px)`;
+
+    }
+
+    setInterval(slideLogos, 3000);
+
+  </script>
 
 </body>
 </html>
