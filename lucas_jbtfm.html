@@ -1,158 +1,1815 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deine Startseite</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    color: #0ff;
-    font-family: 'Orbitron', monospace, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
+  <title>Lucas' Startseite</title>
 
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 15px #0ff;
-  }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  .links {
-    display: flex;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
 
-  .link {
-    background: rgba(0, 255, 255, 0.1);
-    border: 2px solid #0ff;
-    padding: 1.2rem 2rem;
-    border-radius: 15px;
-    text-decoration: none;
-    color: #0ff;
-    font-size: 1.3rem;
-    letter-spacing: 0.1rem;
-    box-shadow: 0 0 15px #0ff88;
-    transition: all 0.3s ease;
-    position: relative;
-  }
-  .link::after {
-    content: '↗';
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.6;
-    font-weight: bold;
-  }
-  .link:hover {
-    background: #0ff;
-    color: #020202;
-    box-shadow: 0 0 25px #0ff;
-    transform: scale(1.1);
-  }
+  <style>
 
-  footer {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 200px;
-    height: 70px;
-    overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid #0ff;
-    box-shadow: 0 0 15px #0ff66;
-    background: rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
+    /* =========================================================
+       MATERIAL 3 DARK THEME
+       ========================================================= */
 
-  .logo-slider {
-    display: flex;
-    height: 70px;
-    transition: transform 0.6s ease-in-out;
-  }
+    :root {
 
-  .logo-slider img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    margin-right: 15px;
-    filter: drop-shadow(0 0 5px #0ff);
-  }
+      --md-primary: #a8c7fa;
+      --md-on-primary: #062e6f;
 
-  /* Seitenmenü */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 70px;
-    height: 100vh;
-    background: rgba(0, 255, 255, 0.1);
-    border-right: 2px solid #0ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 1rem;
-    box-shadow: 0 0 15px #0ff88;
-    z-index: 1000;
-  }
+      --md-background: #101114;
 
-  .sidebar-button {
-    width: 50px;
-    height: 50px;
-    margin: 1rem 0;
-    background: rgba(0, 255, 255, 0.2);
-    border: 1px solid #0ff;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+      --md-surface-container-low: #191a1f;
+      --md-surface-container: #1d1e23;
+      --md-surface-container-high: #282a30;
+      --md-surface-container-highest: #33353b;
 
-  .sidebar-button img {
-    width: 30px;
-    height: 30px;
-    filter: drop-shadow(0 0 5px #0ff);
-  }
+      --md-on-surface: #e3e2e6;
+      --md-on-surface-variant: #c4c6d0;
 
-  .sidebar-button:hover {
-    background: #0ff;
-    transform: scale(1.15);
-  }
-</style>
+      --md-outline: #8e9099;
+      --md-outline-variant: #44474f;
+
+      --md-success: #81c995;
+      --md-warning: #ffcc80;
+      --md-error: #f28b82;
+
+      --radius-large: 28px;
+      --radius-medium: 20px;
+      --radius-small: 14px;
+    }
+
+
+    /* =========================================================
+       GLOBAL
+       ========================================================= */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+
+      margin: 0;
+
+      min-height: 100vh;
+
+      background:
+        radial-gradient(
+          circle at 50% -20%,
+          rgba(168, 199, 250, 0.10),
+          transparent 40%
+        ),
+        var(--md-background);
+
+      color: var(--md-on-surface);
+
+      font-family:
+        "Google Sans",
+        "Google Sans Text",
+        Arial,
+        sans-serif;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    /* =========================================================
+       TOP APP BAR
+       ========================================================= */
+
+    .top-app-bar {
+
+      position: fixed;
+
+      top: 0;
+      left: 0;
+      right: 0;
+
+      height: 72px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 28px;
+
+      background:
+        rgba(16, 17, 20, 0.88);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border-bottom:
+        1px solid rgba(68, 71, 79, 0.35);
+
+      z-index: 1000;
+    }
+
+
+    .app-title {
+
+      display: flex;
+      align-items: center;
+
+      gap: 14px;
+
+      font-size: 20px;
+
+      font-weight: 600;
+    }
+
+
+    .app-icon {
+
+      width: 40px;
+      height: 40px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
+      background:
+        var(--md-primary);
+
+      color:
+        var(--md-on-primary);
+
+      font-size: 18px;
+
+      font-weight: 700;
+    }
+
+
+    /* =========================================================
+       MAIN
+       ========================================================= */
+
+    main {
+
+      width:
+        min(1100px, calc(100% - 40px));
+
+      margin:
+        0 auto;
+
+      padding-top:
+        140px;
+
+      padding-bottom:
+        80px;
+    }
+
+
+    /* =========================================================
+       NEWS CONTAINER
+       ========================================================= */
+
+    .news-container {
+
+      display: none;
+
+      margin-bottom:
+        32px;
+    }
+
+
+    .news-container.visible {
+      display: block;
+    }
+
+
+    /* =========================================================
+       NEWS BANNER
+       ========================================================= */
+
+    .news-banner {
+
+      position: relative;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 18px;
+
+      padding: 20px 22px;
+
+      background:
+        var(--md-surface-container);
+
+      border:
+        1px solid var(--md-outline-variant);
+
+      border-radius:
+        var(--radius-large);
+
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.20);
+
+      animation:
+        newsIn 300ms cubic-bezier(.2,.8,.2,1);
+    }
+
+
+    @keyframes newsIn {
+
+      from {
+
+        opacity: 0;
+
+        transform:
+          translateY(-10px);
+      }
+
+      to {
+
+        opacity: 1;
+
+        transform:
+          translateY(0);
+      }
+    }
+
+
+    /* =========================================================
+       NEWS ICON
+       ========================================================= */
+
+    .news-icon {
+
+      flex-shrink: 0;
+
+      width: 48px;
+      height: 48px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 16px;
+
+      background:
+        var(--md-surface-container-highest);
+
+      color:
+        var(--md-primary);
+
+      font-size: 22px;
+
+      font-weight: 600;
+    }
+
+
+    /* =========================================================
+       NEWS CONTENT
+       ========================================================= */
+
+    .news-content {
+
+      min-width: 0;
+
+      flex: 1;
+    }
+
+
+    .news-label {
+
+      margin-bottom: 4px;
+
+      color:
+        var(--md-primary);
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      letter-spacing:
+        0.4px;
+
+      text-transform:
+        uppercase;
+    }
+
+
+    .news-title {
+
+      margin: 0;
+
+      color:
+        var(--md-on-surface);
+
+      font-size: 17px;
+
+      font-weight: 600;
+    }
+
+
+    .news-message {
+
+      margin-top: 4px;
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size: 14px;
+
+      line-height: 1.45;
+    }
+
+
+    /* =========================================================
+       NEWS LINK
+       ========================================================= */
+
+    .news-link {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      margin-top: 10px;
+
+      color:
+        var(--md-primary);
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+      text-decoration: none;
+    }
+
+
+    .news-link:hover {
+
+      text-decoration:
+        underline;
+    }
+
+
+    /* =========================================================
+       CLOSE BUTTON
+       ========================================================= */
+
+    .news-close {
+
+      flex-shrink: 0;
+
+      width: 40px;
+      height: 40px;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      background:
+        transparent;
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size: 20px;
+
+      cursor: pointer;
+
+      transition:
+        background 180ms ease,
+        color 180ms ease;
+    }
+
+
+    .news-close:hover {
+
+      background:
+        var(--md-surface-container-highest);
+
+      color:
+        var(--md-on-surface);
+    }
+
+
+    /* =========================================================
+       NEWS TYPES
+       ========================================================= */
+
+    .news-banner.warning {
+
+      border-color:
+        rgba(255, 193, 7, 0.35);
+    }
+
+
+    .news-banner.warning .news-icon {
+
+      color:
+        var(--md-warning);
+    }
+
+
+    .news-banner.error {
+
+      border-color:
+        rgba(242, 139, 130, 0.35);
+    }
+
+
+    .news-banner.error .news-icon {
+
+      color:
+        var(--md-error);
+    }
+
+
+    .news-banner.success {
+
+      border-color:
+        rgba(129, 201, 149, 0.35);
+    }
+
+
+    .news-banner.success .news-icon {
+
+      color:
+        var(--md-success);
+    }
+
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .hero {
+
+      margin-bottom:
+        48px;
+    }
+
+
+    .eyebrow {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      padding:
+        8px 14px;
+
+      border-radius:
+        999px;
+
+      background:
+        var(--md-surface-container-high);
+
+      color:
+        var(--md-primary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        600;
+
+      margin-bottom:
+        18px;
+    }
+
+
+    h1 {
+
+      margin: 0;
+
+      font-size:
+        clamp(42px, 7vw, 72px);
+
+      line-height:
+        1.02;
+
+      letter-spacing:
+        -2.5px;
+
+      font-weight:
+        600;
+    }
+
+
+    .hero p {
+
+      max-width:
+        650px;
+
+      margin-top:
+        20px;
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size:
+        18px;
+
+      line-height:
+        1.6;
+    }
+
+
+    /* =========================================================
+       SECTION
+       ========================================================= */
+
+    .section-title {
+
+      margin:
+        0 0 18px;
+
+      font-size:
+        22px;
+
+      font-weight:
+        600;
+    }
+
+
+    /* =========================================================
+       LINK GRID
+       ========================================================= */
+
+    .links {
+
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(240px, 1fr)
+        );
+
+      gap:
+        16px;
+    }
+
+
+    /* =========================================================
+       LINK CARD
+       ========================================================= */
+
+    .link {
+
+      position:
+        relative;
+
+      min-height:
+        150px;
+
+      padding:
+        24px;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      justify-content:
+        space-between;
+
+      text-decoration:
+        none;
+
+      color:
+        var(--md-on-surface);
+
+      background:
+        var(--md-surface-container);
+
+      border:
+        1px solid transparent;
+
+      border-radius:
+        var(--radius-large);
+
+      transition:
+        background 180ms ease,
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+
+    .link:hover {
+
+      background:
+        var(--md-surface-container-high);
+
+      border-color:
+        var(--md-outline-variant);
+
+      transform:
+        translateY(-3px);
+
+      box-shadow:
+        0 8px 24px
+        rgba(0, 0, 0, 0.28);
+    }
+
+
+    .link:active {
+
+      transform:
+        scale(0.98);
+    }
+
+
+    /* =========================================================
+       LINK ICON
+       ========================================================= */
+
+    .link-icon {
+
+      width:
+        44px;
+
+      height:
+        44px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      border-radius:
+        14px;
+
+      background:
+        var(--md-surface-container-highest);
+
+      color:
+        var(--md-primary);
+
+      font-size:
+        20px;
+
+      font-weight:
+        600;
+    }
+
+
+    /* =========================================================
+       LINK CONTENT
+       ========================================================= */
+
+    .link-content {
+
+      margin-top:
+        18px;
+    }
+
+
+    .link-title {
+
+      display:
+        block;
+
+      font-size:
+        17px;
+
+      font-weight:
+        600;
+
+      margin-bottom:
+        5px;
+    }
+
+
+    .link-description {
+
+      display:
+        block;
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size:
+        14px;
+
+      line-height:
+        1.4;
+
+      padding-right:
+        20px;
+    }
+
+
+    /* =========================================================
+       ARROW
+       ========================================================= */
+
+    .arrow {
+
+      position:
+        absolute;
+
+      right:
+        20px;
+
+      top:
+        20px;
+
+      width:
+        34px;
+
+      height:
+        34px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      border-radius:
+        50%;
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size:
+        18px;
+
+      transition:
+        background 180ms ease,
+        color 180ms ease;
+    }
+
+
+    .link:hover .arrow {
+
+      background:
+        var(--md-primary);
+
+      color:
+        var(--md-on-primary);
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    footer {
+
+      width:
+        min(1100px, calc(100% - 40px));
+
+      margin:
+        auto auto 28px;
+
+      padding:
+        18px 22px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      background:
+        var(--md-surface-container-low);
+
+      border:
+        1px solid var(--md-outline-variant);
+
+      border-radius:
+        var(--radius-medium);
+
+      color:
+        var(--md-on-surface-variant);
+
+      font-size:
+        13px;
+    }
+
+
+    .footer-left {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        10px;
+    }
+
+
+    .status-dot {
+
+      width:
+        9px;
+
+      height:
+        9px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--md-success);
+
+      box-shadow:
+        0 0 0 4px
+        rgba(129, 201, 149, 0.10);
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 650px) {
+
+      .top-app-bar {
+
+        height:
+          64px;
+
+        padding:
+          0 18px;
+      }
+
+
+      .app-title {
+
+        font-size:
+          18px;
+      }
+
+
+      .app-icon {
+
+        width:
+          36px;
+
+        height:
+          36px;
+      }
+
+
+      main {
+
+        width:
+          calc(100% - 28px);
+
+        padding-top:
+          110px;
+      }
+
+
+      h1 {
+
+        letter-spacing:
+          -1.5px;
+      }
+
+
+      .hero p {
+
+        font-size:
+          16px;
+      }
+
+
+      .links {
+
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .link {
+
+        min-height:
+          135px;
+      }
+
+
+      .news-banner {
+
+        align-items:
+          flex-start;
+
+        padding:
+          18px;
+      }
+
+
+      .news-icon {
+
+        width:
+          42px;
+
+        height:
+          42px;
+
+        border-radius:
+          14px;
+      }
+
+
+      .news-title {
+
+        font-size:
+          16px;
+      }
+
+
+      .news-message {
+
+        font-size:
+          13px;
+      }
+
+
+      footer {
+
+        width:
+          calc(100% - 28px);
+
+        text-align:
+          center;
+
+        justify-content:
+          center;
+      }
+
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+
+        transition:
+          none !important;
+
+        animation:
+          none !important;
+
+        scroll-behavior:
+          auto !important;
+      }
+    }
+
+  </style>
 </head>
+
+
 <body>
 
 
+  <!-- =======================================================
+       TOP APP BAR
+       ======================================================= -->
 
-<h1>Willkommen, Lucas</h1>
+  <header class="top-app-bar">
 
-<div class="links">
-  <a class="link" href="https://bigtimefm.de" target="_blank" rel="noopener noreferrer">BigTimeFM</a>
-  <a class="link" href="https://bigtimefm.de/junior" target="_blank" rel="noopener noreferrer">BigTimeFM Junior Radio</a>
-  <a class="link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-  <a class="link" href="https://google.de" target="_blank" rel="noopener noreferrer">Google</a>
-  <a class="link" href="https://panel.hustensaft.org" target="_blank" rel="noopener noreferrer">Hustensaft LABS</a>
-  <a class="link" href="https://billing.hustensaft.org" target="_blank" rel="noopener noreferrer">Hustensaft LABS Billing</a>
-  <a class="link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
-  <a class="link" href="https://junior.bigtimefm.de" target="_blank" rel="noopener noreferrer">BigTimeFM Junior Verwaltung</a>
-</div>
+    <div class="app-title">
 
+      <div class="app-icon">
+        L
+      </div>
+
+      <span>
+        Lucas' Startseite
+      </span>
+
+    </div>
+
+  </header>
+
+
+  <!-- =======================================================
+       MAIN
+       ======================================================= -->
+
+  <main>
+
+
+    <!-- =====================================================
+         NEWS
+         ===================================================== -->
+
+    <section
+      id="news-container"
+      class="news-container"
+      aria-live="polite"
+    ></section>
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero">
+
+      <span class="eyebrow">
+        Persönliches Dashboard
+      </span>
+
+
+      <h1>
+        Willkommen, Lucas.
+      </h1>
+
+
+      <p>
+        Deine wichtigsten Websites, Projekte und Dienste
+        an einem zentralen Ort.
+      </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUICK LINKS
+         ===================================================== -->
+
+    <section>
+
+      <h2 class="section-title">
+        Schnellzugriff
+      </h2>
+
+
+      <div class="links">
+
+
+        <!-- BigTimeFM -->
+
+        <a
+          class="link"
+          href="https://bigtimefm.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            ♫
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              BigTimeFM
+            </span>
+
+            <span class="link-description">
+              Radio, Streams und aktuelle Informationen
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- BigTimeFM Junior -->
+
+        <a
+          class="link"
+          href="https://bigtimefm.de/junior"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            🎧
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              BigTimeFM Junior Radio
+            </span>
+
+            <span class="link-description">
+              Das Junior-Radio von BigTimeFM
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- YouTube -->
+
+        <a
+          class="link"
+          href="https://youtube.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            ▶
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              YouTube
+            </span>
+
+            <span class="link-description">
+              Videos und Creator-Inhalte
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- Google -->
+
+        <a
+          class="link"
+          href="https://google.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            G
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              Google
+            </span>
+
+            <span class="link-description">
+              Suche und Google-Dienste
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- Hustensaft LABS -->
+
+        <a
+          class="link"
+          href="https://panel.hustensaft.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            ▣
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              Hustensaft LABS
+            </span>
+
+            <span class="link-description">
+              Server, Hosting und Infrastruktur
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- ChatGPT -->
+
+        <a
+          class="link"
+          href="https://chatgpt.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            ✦
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              ChatGPT
+            </span>
+
+            <span class="link-description">
+              KI-Assistent für Arbeit und Projekte
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+        <!-- Junior Verwaltung -->
+
+        <a
+          class="link"
+          href="https://junior.bigtimefm.de"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <div class="link-icon">
+            ⚙
+          </div>
+
+
+          <div class="link-content">
+
+            <span class="link-title">
+              BigTimeFM Junior Verwaltung
+            </span>
+
+            <span class="link-description">
+              Verwaltung und technische Systeme
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            ↗
+          </span>
+
+        </a>
+
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =======================================================
+       FOOTER
+       ======================================================= -->
+
+  <footer>
+
+    <div class="footer-left">
+
+      <span class="status-dot"></span>
+
+      <span>
+        System online · Lucas © 2026
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =======================================================
+       NEWS SYSTEM
+       ======================================================= -->
+
+  <script>
+
+    /*
+     * ========================================================
+     * KONFIGURATION
+     * ========================================================
+     */
+
+    const NEWS_URL = "news.json";
+
+    /*
+     * Alle 60 Sekunden neu prüfen.
+     */
+
+    const NEWS_REFRESH_INTERVAL = 60 * 1000;
+
+
+    /*
+     * Container
+     */
+
+    const newsContainer =
+      document.getElementById(
+        "news-container"
+      );
+
+
+    /*
+     * Icons für Meldungstypen
+     */
+
+    const newsIcons = {
+
+      info: "ⓘ",
+
+      success: "✓",
+
+      warning: "!",
+
+      error: "×"
+
+    };
+
+
+    /*
+     * ========================================================
+     * HTML SICHER MACHEN
+     * ========================================================
+     *
+     * Verhindert, dass HTML aus der JSON-Datei
+     * direkt in die Seite eingeschleust wird.
+     */
+
+    function escapeHtml(value) {
+
+      const div =
+        document.createElement("div");
+
+      div.textContent =
+        value ?? "";
+
+      return div.innerHTML;
+    }
+
+
+    /*
+     * ========================================================
+     * NEWS SCHLIESSEN
+     * ========================================================
+     */
+
+    function closeNews(newsId) {
+
+      /*
+       * Welche Meldung wurde geschlossen?
+       */
+
+      sessionStorage.setItem(
+        "newsClosed",
+        String(newsId)
+      );
+
+
+      /*
+       * Banner ausblenden
+       */
+
+      newsContainer.classList.remove(
+        "visible"
+      );
+    }
+
+
+    /*
+     * ========================================================
+     * NEWS LADEN
+     * ========================================================
+     */
+
+    async function loadNews() {
+
+      try {
+
+        /*
+         * Cache umgehen.
+         *
+         * Dadurch wird wirklich die aktuelle
+         * news.json abgefragt.
+         */
+
+        const response =
+          await fetch(
+            `${NEWS_URL}?t=${Date.now()}`,
+            {
+              cache: "no-store"
+            }
+          );
+
+
+        /*
+         * HTTP-Fehler
+         */
+
+        if (!response.ok) {
+
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+
+        }
+
+
+        /*
+         * JSON lesen
+         */
+
+        const data =
+          await response.json();
+
+
+        /*
+         * Prüfen, ob News vorhanden sind.
+         */
+
+        if (
+          !data.news ||
+          !Array.isArray(data.news)
+        ) {
+
+          hideNews();
+
+          return;
+        }
+
+
+        /*
+         * Aktuelle Zeit
+         */
+
+        const now =
+          new Date();
+
+
+        /*
+         * Nur aktive und nicht abgelaufene
+         * Meldungen berücksichtigen.
+         */
+
+        const activeNews =
+          data.news.filter(news => {
+
+            /*
+             * active muss true sein.
+             */
+
+            if (
+              news.active !== true
+            ) {
+
+              return false;
+            }
+
+
+            /*
+             * Startzeit prüfen.
+             */
+
+            if (news.start) {
+
+              const start =
+                new Date(news.start);
+
+              if (
+                now < start
+              ) {
+
+                return false;
+              }
+            }
+
+
+            /*
+             * Ablaufzeit prüfen.
+             */
+
+            if (news.expires) {
+
+              const expires =
+                new Date(news.expires);
+
+              if (
+                now >= expires
+              ) {
+
+                return false;
+              }
+            }
+
+
+            return true;
+
+          });
+
+
+        /*
+         * Keine aktiven Meldungen
+         */
+
+        if (
+          activeNews.length === 0
+        ) {
+
+          hideNews();
+
+          return;
+        }
+
+
+        /*
+         * Priorität:
+         *
+         * 1 = höchste
+         * 2 = normal
+         * 3 = niedrig
+         */
+
+        activeNews.sort(
+          (a, b) =>
+            (a.priority ?? 2) -
+            (b.priority ?? 2)
+        );
+
+
+        /*
+         * Höchste Priorität anzeigen
+         */
+
+        const news =
+          activeNews[0];
+
+
+        /*
+         * Bereits geschlossene Meldung?
+         */
+
+        const closedNews =
+          sessionStorage.getItem(
+            "newsClosed"
+          );
+
+
+        /*
+         * Wenn genau diese Meldung
+         * geschlossen wurde, nichts anzeigen.
+         *
+         * Eine neue Meldung mit anderer ID
+         * erscheint trotzdem.
+         */
+
+        if (
+          closedNews &&
+          String(news.id) === closedNews
+        ) {
+
+          hideNews();
+
+          return;
+        }
+
+
+        /*
+         * Typ bestimmen
+         */
+
+        const type =
+          news.type || "info";
+
+
+        /*
+         * Icon bestimmen
+         */
+
+        const icon =
+          newsIcons[type]
+          || newsIcons.info;
+
+
+        /*
+         * Optionaler Link
+         */
+
+        let linkHtml = "";
+
+
+        if (
+          news.link &&
+          news.link.url
+        ) {
+
+          linkHtml = `
+
+            <a
+              class="news-link"
+              href="${escapeHtml(news.link.url)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ${escapeHtml(
+                news.link.text
+                || "Mehr erfahren"
+              )}
+              ↗
+            </a>
+
+          `;
+        }
+
+
+        /*
+         * Banner erstellen
+         */
+
+        newsContainer.innerHTML = `
+
+          <div
+            class="news-banner ${escapeHtml(type)}"
+          >
+
+            <div class="news-icon">
+              ${icon}
+            </div>
+
+
+            <div class="news-content">
+
+              <div class="news-label">
+                Neuigkeiten
+              </div>
+
+
+              <h2 class="news-title">
+                ${escapeHtml(
+                  news.title
+                )}
+              </h2>
+
+
+              <div class="news-message">
+                ${escapeHtml(
+                  news.message
+                )}
+              </div>
+
+
+              ${linkHtml}
+
+            </div>
+
+
+            <button
+              class="news-close"
+              type="button"
+              aria-label="Meldung schließen"
+              onclick="closeNews('${escapeHtml(news.id)}')"
+            >
+              ×
+            </button>
+
+          </div>
+
+        `;
+
+
+        /*
+         * Anzeigen
+         */
+
+        newsContainer.classList.add(
+          "visible"
+        );
+
+
+      } catch (error) {
+
+        /*
+         * Fehler nur in der Konsole.
+         *
+         * Die Startseite selbst bleibt
+         * vollständig funktionsfähig.
+         */
+
+        console.error(
+          "News konnten nicht geladen werden:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+     * ========================================================
+     * NEWS AUSBLENDEN
+     * ========================================================
+     */
+
+    function hideNews() {
+
+      newsContainer.classList.remove(
+        "visible"
+      );
+
+      newsContainer.innerHTML = "";
+
+    }
+
+
+    /*
+     * ========================================================
+     * ERSTER LOAD
+     * ========================================================
+     */
+
+    loadNews();
+
+
+    /*
+     * ========================================================
+     * AUTOMATISCHER REFRESH
+     * ========================================================
+     *
+     * Alle 60 Sekunden wird news.json erneut geladen.
+     */
+
+    setInterval(
+      loadNews,
+      NEWS_REFRESH_INTERVAL
+    );
+
+  </script>
 
 
 </body>
 </html>
+```
