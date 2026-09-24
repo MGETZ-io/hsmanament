@@ -1,0 +1,19 @@
+{
+  "news": [
+    {
+      "id": 1,
+      "title": "Wartungsarbeiten",
+      "message": "Die Startseiten werden gewartet.",
+      "type": "warning",
+      "active": true,
+      "priority": 1,
+      "start": "2026-09-24T20:00:00+02:00",
+      "expires": "2026-09-24T23:30:00+02:00",
+      "link": {
+        "text": "Weitere Informationen",
+        "url": "https://bigtimefm.de"
+      }
+    }
+    }
+  ]
+}
